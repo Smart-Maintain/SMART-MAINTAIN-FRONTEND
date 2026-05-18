@@ -1,0 +1,188 @@
+<div class="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#0A0A0A] px-4 py-8">
+  <video
+    src="/videos/hero-bg.mp4"
+    [autoplay]="true"
+    [muted]="true"
+    [loop]="true"
+    playsinline
+    class="absolute inset-0 z-0 h-full w-full object-cover opacity-55"
+  ></video>
+  <div class="absolute inset-0 z-0 bg-[radial-gradient(circle_at_20%_20%,rgba(242,140,40,0.22),transparent_28%),linear-gradient(135deg,rgba(10,10,10,0.96),rgba(10,10,10,0.62)_45%,rgba(10,10,10,0.94))]"></div>
+
+  <a routerLink="/" class="absolute left-6 top-6 z-50 flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-[#8A8A93] transition-colors hover:text-[#F0F0F0] font-['Space_Grotesk']">
+    ← Return to Landing
+  </a>
+
+  <section class="relative z-10 grid min-h-[680px] w-full max-w-6xl overflow-hidden border border-white/10 bg-[#080808]/70 shadow-2xl backdrop-blur-md lg:grid-cols-[minmax(380px,440px)_1fr]">
+    <div class="z-10 flex h-full flex-col justify-center border-0 border-r border-white/10 bg-[#111114]/88 py-0 text-[#F0F0F0] shadow-none">
+      <div class="px-6 pb-4 pt-8 text-center sm:px-10">
+        <div class="mb-7 grid grid-cols-2 border border-white/10 bg-black/25 p-1">
+          <button
+            type="button"
+            (click)="switchMode('login')"
+            [ngClass]="mode === 'login' ? 'text-[#0A0A0A] bg-[#F28C28]' : 'text-[#8A8A93] hover:text-[#F0F0F0]'"
+            class="relative h-11 overflow-hidden text-[11px] uppercase tracking-[0.16em] transition-colors"
+          >
+            <span class="relative z-10">login</span>
+          </button>
+          <button
+            type="button"
+            (click)="switchMode('register')"
+            [ngClass]="mode === 'register' ? 'text-[#0A0A0A] bg-[#F28C28]' : 'text-[#8A8A93] hover:text-[#F0F0F0]'"
+            class="relative h-11 overflow-hidden text-[11px] uppercase tracking-[0.16em] transition-colors"
+          >
+            <span class="relative z-10">register</span>
+          </button>
+        </div>
+        <h3 class="font-['Space_Grotesk'] text-2xl font-normal uppercase tracking-tight text-[#F0F0F0]">
+          {{ authTitle }}
+        </h3>
+        <p class="mt-2 text-xs uppercase tracking-[0.2em] text-[#8A8A93]">
+          {{ mode === 'login' ? 'Temporary Role Access' : 'Maintenance Crew Onboarding' }}
+        </p>
+      </div>
+
+      <div class="px-6 pb-8 sm:px-10">
+        <div *ngIf="error || notice"
+          class="mb-5 border p-3 font-['Space_Grotesk'] text-[13px] tracking-wider"
+          [ngClass]="error ? 'border-[#F28C28] text-[#F28C28]' : 'border-[#00A8E8] text-[#00A8E8]'"
+        >
+          {{ error || notice }}
+        </div>
+
+        <form *ngIf="mode === 'login'" (ngSubmit)="handleSubmit()" class="space-y-6">
+          <div class="space-y-2 flex flex-col">
+            <label for="username" class="text-[11px] tracking-[0.2em] text-[#8A8A93] uppercase font-['Space_Grotesk']">Username</label>
+            <input
+              id="username"
+              name="username"
+              [(ngModel)]="username"
+              placeholder="admin"
+              class="bg-transparent border-t-0 border-x-0 border-b border-white/15 rounded-none px-0 text-[15px] text-[#F0F0F0] placeholder:text-[#5F6067] focus-visible:ring-0 focus-visible:border-[#F28C28] outline-none pb-2"
+            />
+          </div>
+          <div class="space-y-2 flex flex-col">
+            <label for="password" class="text-[11px] tracking-[0.2em] text-[#8A8A93] uppercase font-['Space_Grotesk']">Password</label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              [(ngModel)]="password"
+              placeholder="admin123"
+              class="bg-transparent border-t-0 border-x-0 border-b border-white/15 rounded-none px-0 text-[15px] text-[#F0F0F0] placeholder:text-[#5F6067] focus-visible:ring-0 focus-visible:border-[#F28C28] outline-none pb-2"
+            />
+          </div>
+          <div class="space-y-2 border border-white/10 p-3 flex flex-col gap-2">
+            <button
+              *ngFor="let option of temporaryLoginOptions"
+              type="button"
+              (click)="useTemporary(option)"
+              class="flex w-full items-center justify-between gap-3 text-left text-[11px] uppercase tracking-[0.12em] text-[#8A8A93] transition-colors hover:text-[#F28C28]"
+            >
+              <span>{{ option.username }}</span>
+              <span>{{ option.password }}</span>
+            </button>
+          </div>
+          <button
+            class="mt-6 h-[54px] w-full rounded-none border border-[#F28C28] bg-transparent font-['Space_Grotesk'] text-[13px] font-medium uppercase tracking-[0.16em] text-[#F0F0F0] transition-all hover:bg-[#F28C28] hover:text-[#0A0A0A] disabled:opacity-50"
+            type="submit"
+            [disabled]="isPending"
+          >
+            {{ isPending ? 'Signing in...' : 'Sign in' }}
+          </button>
+        </form>
+
+        <form *ngIf="mode === 'register'" (ngSubmit)="handleRegisterSubmit()" class="space-y-5">
+          <div class="space-y-2 flex flex-col">
+            <label for="register-name" class="text-[11px] tracking-[0.2em] text-[#8A8A93] uppercase font-['Space_Grotesk']">Full Name</label>
+            <input
+              id="register-name"
+              name="registerName"
+              [(ngModel)]="registerName"
+              placeholder="Jane Doe"
+              class="bg-transparent border-t-0 border-x-0 border-b border-white/15 rounded-none px-0 text-[15px] text-[#F0F0F0] placeholder:text-[#5F6067] focus-visible:ring-0 focus-visible:border-[#F28C28] outline-none pb-2"
+            />
+          </div>
+          <div class="space-y-2 flex flex-col">
+            <label for="register-email" class="text-[11px] tracking-[0.2em] text-[#8A8A93] uppercase font-['Space_Grotesk']">Email</label>
+            <input
+              id="register-email"
+              name="registerEmail"
+              type="email"
+              [(ngModel)]="registerEmail"
+              placeholder="jane@example.com"
+              class="bg-transparent border-t-0 border-x-0 border-b border-white/15 rounded-none px-0 text-[15px] text-[#F0F0F0] placeholder:text-[#5F6067] focus-visible:ring-0 focus-visible:border-[#F28C28] outline-none pb-2"
+            />
+          </div>
+          <div class="space-y-2 flex flex-col">
+            <label for="register-role" class="text-[11px] tracking-[0.2em] text-[#8A8A93] uppercase font-['Space_Grotesk']">Role</label>
+            <select
+              id="register-role"
+              name="registerRole"
+              [(ngModel)]="registerRole"
+              class="h-10 w-full border-0 border-b border-white/15 bg-transparent px-0 font-['Inter'] text-[15px] text-[#F0F0F0] outline-none focus:border-[#F28C28] pb-2"
+            >
+              <option class="bg-[#111114]" value="manager">Manager</option>
+              <option class="bg-[#111114]" value="engineer">Engineer</option>
+              <option class="bg-[#111114]" value="technician">Technician</option>
+            </select>
+          </div>
+          <div class="grid gap-5 sm:grid-cols-2">
+            <div class="space-y-2 flex flex-col">
+              <label for="register-password" class="text-[11px] tracking-[0.2em] text-[#8A8A93] uppercase font-['Space_Grotesk']">Password</label>
+              <input
+                id="register-password"
+                name="registerPassword"
+                type="password"
+                [(ngModel)]="registerPassword"
+                class="bg-transparent border-t-0 border-x-0 border-b border-white/15 rounded-none px-0 text-[15px] text-[#F0F0F0] placeholder:text-[#5F6067] focus-visible:ring-0 focus-visible:border-[#F28C28] outline-none pb-2"
+              />
+            </div>
+            <div class="space-y-2 flex flex-col">
+              <label for="confirm-password" class="text-[11px] tracking-[0.2em] text-[#8A8A93] uppercase font-['Space_Grotesk']">Confirm</label>
+              <input
+                id="confirm-password"
+                name="confirmPassword"
+                type="password"
+                [(ngModel)]="confirmPassword"
+                class="bg-transparent border-t-0 border-x-0 border-b border-white/15 rounded-none px-0 text-[15px] text-[#F0F0F0] placeholder:text-[#5F6067] focus-visible:ring-0 focus-visible:border-[#F28C28] outline-none pb-2"
+              />
+            </div>
+          </div>
+          <button
+            class="mt-6 h-[54px] w-full rounded-none border border-[#00A8E8] bg-transparent font-['Space_Grotesk'] text-[13px] font-medium uppercase tracking-[0.16em] text-[#F0F0F0] transition-all hover:bg-[#00A8E8] hover:text-[#0A0A0A] disabled:opacity-50"
+            type="submit"
+            [disabled]="isPending"
+          >
+            {{ isPending ? 'Creating...' : 'Create access' }}
+          </button>
+        </form>
+
+        <div class="mt-7 text-center text-[12px] uppercase tracking-[0.14em] text-[#8A8A93]">
+          <a *ngIf="mode === 'login'" (click)="switchMode('register')" class="cursor-pointer text-[#F28C28] transition-colors hover:text-[#F0F0F0]">
+            Request new access
+          </a>
+          <a *ngIf="mode === 'register'" (click)="switchMode('login')" class="cursor-pointer text-[#00A8E8] transition-colors hover:text-[#F0F0F0]">
+            Return to login
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="relative hidden min-h-[680px] overflow-hidden lg:block">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_65%_38%,rgba(0,168,232,0.18),transparent_28%)]"></div>
+      <spline-viewer
+        url="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+        class="absolute inset-0 h-full w-full"
+      ></spline-viewer>
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 border-t border-white/10 bg-black/55 px-8 py-6 backdrop-blur-sm">
+        <p class="font-['Space_Grotesk'] text-[11px] uppercase tracking-[0.22em] text-[#F28C28]">
+          Smart Airplane Maintenance
+        </p>
+        <p class="mt-2 max-w-xl text-sm text-[#D8D8DC]">
+          Role-based access for maintenance control, engineering stations, and technician task operations.
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
