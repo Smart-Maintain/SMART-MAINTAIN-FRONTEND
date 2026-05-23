@@ -18,6 +18,7 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, frontend');
+    // The app uses a router outlet as the root; verify it is present.
+    expect(compiled.querySelector('router-outlet')).toBeTruthy();
   });
 });

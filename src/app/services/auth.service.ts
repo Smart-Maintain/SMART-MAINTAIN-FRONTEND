@@ -38,7 +38,7 @@ export class AuthService {
   }
 
   login(credentials: { email: string; password: string }) {
-    return this.http.post<{ token: string; role: string }>('/api/identity-service/account/login', credentials).pipe(
+    return this.http.post<{ token: string; role: string }>('http://localhost:8888/api/identity-service/account/login', credentials).pipe(
       tap((response) => {
         let normalizedRole = response.role.toLowerCase().replace('role_', '') as any;
         if (normalizedRole === 'ingenieur') normalizedRole = 'engineer';
@@ -72,7 +72,7 @@ export class AuthService {
     if (role === 'technician') endpoint = 'operateur';
     if (role === 'admin') endpoint = 'admin';
     
-    return this.http.post(`/api/identity-service/account/${endpoint}`, userData).pipe(
+    return this.http.post(`http://localhost:8888/api/identity-service/account/${endpoint}`, userData).pipe(
       catchError((error) => {
         console.error('Registration error:', error);
         return throwError(() => error);

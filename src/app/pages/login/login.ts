@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -15,8 +15,9 @@ import '@splinetool/viewer';
 })
 export class Login {
   mode: 'login' | 'register' = 'login';
-  username = 'admin';
-  password = 'admin123';
+  // Start with empty fields to avoid accidental concatenation with typed input
+  username = '';
+  password = '';
   registerName = '';
   registerEmail = '';
   registerRole = 'engineer';
@@ -33,7 +34,7 @@ export class Login {
     { username: "tech1", password: "tech123" },
   ];
 
-  constructor(private router: Router, private auth: AuthService) {}
+  constructor(private router: Router, private auth: AuthService, private cdr: ChangeDetectorRef) {}
 
   switchMode(nextMode: 'login' | 'register') {
     this.mode = nextMode;
@@ -70,7 +71,23 @@ export class Login {
       },
       error: (err) => {
         this.isPending = false;
-        this.error = err.error || 'Invalid credentials or server error';
+        let errorMessage = 'Invalid credentials or server error';
+        if (err && err.error) {
+          if (typeof err.error === 'string') {
+            errorMessage = err.error;
+          } else if (err.error.error) {
+            errorMessage = err.error.error;
+          } else if (err.error.text) {
+            errorMessage = err.error.text;
+          } else if (err.error.message) {
+            errorMessage = err.error.message;
+          }
+        } else if (err && err.message) {
+          errorMessage = err.message;
+        }
+        this.error = errorMessage;
+        // Ensure Angular updates the view immediately
+        try { this.cdr.detectChanges(); } catch (e) { /* ignore */ }
       }
     });
   }

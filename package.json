@@ -19,6 +19,7 @@
     "@angular/router": "^21.2.0",
     "@splinetool/viewer": "^1.12.94",
     "lucide-angular": "^1.0.0",
+    "puppeteer": "^25.0.4",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },
