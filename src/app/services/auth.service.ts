@@ -57,7 +57,17 @@ export class AuthService {
           role: normalizedRole
         });
         
-        this.router.navigate(['/dashboard']);
+        if (normalizedRole === 'admin') {
+          this.router.navigate(['/admin/dashboard']);
+        } else if (normalizedRole === 'manager') {
+          this.router.navigate(['/manager/dashboard']);
+        } else if (normalizedRole === 'engineer') {
+          this.router.navigate(['/engineer/dashboard']);
+        } else if (normalizedRole === 'technician') {
+          this.router.navigate(['/technician/tasks']);
+        } else {
+          this.router.navigate(['/dashboard']);
+        }
       }),
       catchError((error) => {
         console.error('Login error:', error);

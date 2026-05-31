@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { DataService } from '../../services/data.service';
 
 @Component({
   selector: 'app-technician',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './technician.html',
   styleUrl: './technician.scss'
 })
@@ -17,6 +18,8 @@ export class Technician implements OnInit {
 
   allTasks: any[] = [];
   isLoading = true;
+  notes: Record<string, string> = {};
+  reportContents: Record<string, string> = {};
 
   mockWeeklyProgress = [
     { day: 'Mon', completed: 2, assigned: 3 },
@@ -28,11 +31,17 @@ export class Technician implements OnInit {
     { day: 'Sun', completed: 0, assigned: 0 },
   ];
 
-  hoveredRow: number | null = null;
+  expandedTaskId: string | null = null;
+  hoveredRow: string | null = null;
+
+  toggleTask(id: string) {
+    this.expandedTaskId = this.expandedTaskId === id ? null : id;
+  }
 
   constructor(public auth: AuthService, private dataService: DataService) {}
 
   ngOnInit() {
+    console.log('Technician page initialized');
     this.loadTasks();
   }
 
@@ -40,6 +49,7 @@ export class Technician implements OnInit {
     this.isLoading = true;
     this.dataService.getTasks().subscribe({
       next: (tasks) => {
+        console.log('Technician fetched tasks:', tasks);
         // Map backend Tache entities to frontend format if needed
         this.allTasks = tasks.map(t => ({
           id: t.id,
@@ -49,8 +59,11 @@ export class Technician implements OnInit {
           category: 'maintenance',
           priority: t.priorite || 'medium',
           status: t.status || 'pending',
-          dueDate: '2026-05-20' // Backend doesn't have dueDate yet
+          dueDate: '2026-05-20', // Backend doesn't have dueDate yet
+          technicianNote: t.technicianNote || '',
+          reportStatus: t.rapports?.[0]?.status || ''
         }));
+        console.log('Technician mapped tasks:', this.allTasks.length, this.allTasks);
         this.isLoading = false;
       },
       error: (err) => {
@@ -83,8 +96,36 @@ export class Technician implements OnInit {
   }
 
   handleCompleteTask(id: string) {
-    this.dataService.updateTaskStatus(id, 'completed').subscribe(() => {
+    this.dataService.checkTaskDone(id).subscribe(() => {
       this.loadTasks();
+    });
+  }
+
+  saveNote(task: any) {
+    const note = this.notes[task.id] || task.technicianNote || '';
+    this.dataService.addTechnicianNote(task.id, note).subscribe(() => {
+      this.notes[task.id] = '';
+      this.loadTasks();
+    });
+  }
+
+  sendTaskReport(task: any) {
+    const content = (this.reportContents[task.id] || '').trim();
+    if (!content) return;
+    const user = this.auth.user();
+    this.dataService.createReport({
+      type: 'TASK',
+      tacheId: task.id,
+      maintenanceId: null,
+      title: `Task rapport #${task.id}`,
+      content,
+      authorRole: 'TECHNICIAN',
+      authorEmail: user?.email || ''
+    }).subscribe(report => {
+      this.dataService.submitReport(report.id).subscribe(() => {
+        this.reportContents[task.id] = '';
+        this.loadTasks();
+      });
     });
   }
 

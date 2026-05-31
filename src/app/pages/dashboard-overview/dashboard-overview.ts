@@ -3,10 +3,12 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { DataService } from '../../services/data.service';
 
+import { FormsModule } from '@angular/forms';
+
 @Component({
   selector: 'app-dashboard-overview',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './dashboard-overview.html',
   styleUrl: './dashboard-overview.scss'
 })
@@ -16,13 +18,9 @@ export class DashboardOverview implements OnInit {
   completedTasks = 0;
   criticalAlerts = 2; // Keep mock for alerts unless there's an API
 
-  recentNotifications = [
-    { id: 1, message: 'GP-7200 turbine temperature exceeding threshold', type: 'critical', time: '2 min ago' },
-    { id: 2, message: 'TF-2841 fan blade inspection due in 3 cycles', type: 'warning', time: '15 min ago' },
-    { id: 3, message: 'LE-1A32 vibration analysis complete - all normal', type: 'info', time: '1 hr ago' },
-    { id: 4, message: 'New maintenance task created for CF-5672', type: 'info', time: '2 hrs ago' },
-    { id: 5, message: 'PW-1100 EGT calibration successful', type: 'success', time: '3 hrs ago' },
-  ];
+  recentNotifications: any[] = [];
+  teams: any[] = [];
+  selectedTeamIds: Record<number, string> = {};
 
   healthReadings = [
     { id: 1, engineName: 'TF-2841', metricType: 'vibration_level', value: 2.3, unit: 'mm/s', status: 'normal', recordedAt: new Date().toISOString() },
@@ -37,6 +35,35 @@ export class DashboardOverview implements OnInit {
       this.pendingTasks = tasks.filter(t => t.status === 'pending').length;
       this.inProgressTasks = tasks.filter(t => t.status === 'in_progress').length;
       this.completedTasks = tasks.filter(t => t.status === 'completed').length;
+    });
+
+    this.dataService.getTeams().subscribe(teams => {
+      this.teams = teams;
+    });
+
+    this.loadAlerts();
+  }
+
+  loadAlerts() {
+    this.dataService.getAlerts().subscribe(alerts => {
+      // Sort alerts descending by timestamp
+      alerts.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+      
+      this.recentNotifications = alerts.map(a => ({
+        id: a.id,
+        message: a.message,
+        type: a.type || 'info',
+        time: new Date(a.timestamp).toLocaleString(),
+        status: a.status
+      }));
+      this.criticalAlerts = alerts.filter(a => a.status === 'PENDING').length;
+    });
+  }
+
+  convertToTask(alertId: number) {
+    const equipeId = this.selectedTeamIds[alertId];
+    this.dataService.convertAlertToTask(alertId, equipeId).subscribe(() => {
+      this.loadAlerts();
     });
   }
 }

@@ -1,18 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { DataService } from '../../services/data.service';
 
 @Component({
   selector: 'app-engineer',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './engineer.html',
   styleUrl: './engineer.scss'
 })
 export class Engineer implements OnInit {
   engines: any[] = [];
+  teams: any[] = [];
+  maintenances: any[] = [];
+  taskReports: any[] = [];
+  reviewNotes: Record<string, string> = {};
   isLoadingData = true;
 
   taskHistory = [
@@ -27,15 +32,28 @@ export class Engineer implements OnInit {
     description: '',
     engineId: '',
     engineName: '',
+    equipeId: '',
+    maintenanceId: '',
     priority: 'medium',
     category: 'inspection',
     dueDate: '',
   };
 
+  assignmentReportForm = {
+    maintenanceId: '',
+    title: '',
+    content: '',
+  };
+
   submitted = false;
   isPending = false;
 
-  myTasks: any[] = []; 
+  myTasks: any[] = [];
+  
+  expandedTaskId: string | null = null;
+  toggleTask(id: string) {
+    this.expandedTaskId = this.expandedTaskId === id ? null : id;
+  }
 
   constructor(public auth: AuthService, private dataService: DataService) {}
 
@@ -61,6 +79,12 @@ export class Engineer implements OnInit {
       }
     });
 
+    this.dataService.getTeams().subscribe(teams => this.teams = teams);
+    this.dataService.getMaintenances().subscribe(maintenances => this.maintenances = maintenances);
+    this.dataService.getReports().subscribe(reports => {
+      this.taskReports = reports.filter(report => report.type === 'TASK' && report.status === 'SUBMITTED');
+    });
+
     // Load Tasks
     this.dataService.getTasks().subscribe({
       next: (tasks) => {
@@ -71,7 +95,10 @@ export class Engineer implements OnInit {
           description: t.description,
           engineName: t.taxonomie?.nom || 'Unknown Engine',
           priority: t.priorite || 'medium',
-          status: t.status || 'pending'
+          status: t.status || 'pending',
+          equipeId: t.equipe?.id || '',
+          maintenanceId: t.maintenance?.id || '',
+          taxonomieId: t.taxonomie?.id || ''
         }));
         this.isLoadingData = false;
       },
@@ -102,7 +129,9 @@ export class Engineer implements OnInit {
       description: this.formData.title + (this.formData.description ? ': ' + this.formData.description : ''),
       priorite: this.formData.priority,
       status: 'pending',
-      taxonomie: { id: engine?.taxonomieId } // Basic mapping
+      taxonomieId: engine?.taxonomieId,
+      equipeId: this.formData.equipeId || null,
+      maintenanceId: this.formData.maintenanceId || null
     };
 
     this.dataService.createTask(newTask).subscribe({
@@ -115,6 +144,8 @@ export class Engineer implements OnInit {
           description: '',
           engineId: '',
           engineName: '',
+          equipeId: '',
+          maintenanceId: '',
           priority: 'medium',
           category: 'inspection',
           dueDate: '',
@@ -132,6 +163,49 @@ export class Engineer implements OnInit {
   updateTaskStatus(id: string, status: string) {
     this.dataService.updateTaskStatus(id, status).subscribe(() => {
       this.loadData();
+    });
+  }
+
+  editTask(task: any) {
+    const description = window.prompt('Task description', task.title);
+    if (!description) return;
+    this.dataService.updateTask(task.id, {
+      description,
+      priorite: task.priority,
+      status: task.status,
+      equipeId: task.equipeId || null,
+      maintenanceId: task.maintenanceId || null,
+      taxonomieId: task.taxonomieId || null
+    }).subscribe(() => this.loadData());
+  }
+
+  deleteTask(id: string) {
+    this.dataService.deleteTask(id).subscribe(() => this.loadData());
+  }
+
+  reviewTaskReport(report: any, status: 'APPROVED' | 'MODIFICATION_REQUESTED') {
+    this.dataService.reviewReport(report.id, status, this.reviewNotes[report.id] || '').subscribe(() => {
+      this.reviewNotes[report.id] = '';
+      this.loadData();
+    });
+  }
+
+  sendAssignmentReport() {
+    if (!this.assignmentReportForm.maintenanceId || !this.assignmentReportForm.title || !this.assignmentReportForm.content) return;
+    const user = this.auth.user();
+    this.dataService.createReport({
+      type: 'ASSIGNMENT',
+      tacheId: null,
+      maintenanceId: this.assignmentReportForm.maintenanceId,
+      title: this.assignmentReportForm.title,
+      content: this.assignmentReportForm.content,
+      authorRole: 'ENGINEER',
+      authorEmail: user?.email || ''
+    }).subscribe(report => {
+      this.dataService.submitReport(report.id).subscribe(() => {
+        this.assignmentReportForm = { maintenanceId: '', title: '', content: '' };
+        this.loadData();
+      });
     });
   }
 
