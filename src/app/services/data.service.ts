@@ -168,6 +168,19 @@ export class DataService {
     return this.http.get<any[]>(`${this.equipmentApi}/bug-feedbacks`);
   }
 
+  // Equipement Creation Endpoints
+  createEquipement(equipementData: any): Observable<any> {
+    return this.http.post(`${this.equipmentApi}/equipements`, equipementData);
+  }
+
+  getTaxonomies(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.equipmentApi}/taxonomies`);
+  }
+
+  createTaxonomie(taxonomieData: any): Observable<any> {
+    return this.http.post(`${this.equipmentApi}/taxonomies`, taxonomieData);
+  }
+
   // Analytics Endpoints (If available in identity-service admin)
   // For now, we will use mock analytics if real ones don't exist yet
 }

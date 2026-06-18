@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
@@ -58,7 +58,7 @@ export class ChatPage {
     { from: 'bot', text: 'Ask about tasks, teams, rapports, or model guidance.' }
   ];
 
-  constructor(private auth: AuthService, private dataService: DataService) {}
+  constructor(private auth: AuthService, private dataService: DataService, private cdr: ChangeDetectorRef) {}
 
   send() {
     const text = this.message.trim();
@@ -73,10 +73,12 @@ export class ChatPage {
       next: (response) => {
         this.messages.push({ from: 'bot', text: response.answer });
         this.isPending = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.messages.push({ from: 'bot', text: 'I cannot reach the maintenance assistant right now.' });
         this.isPending = false;
+        this.cdr.detectChanges();
       }
     });
   }

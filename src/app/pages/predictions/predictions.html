@@ -1,0 +1,213 @@
+<div style="padding: 24px; font-family: 'Inter', sans-serif;">
+  <div style="margin-bottom: 32px;">
+    <h1
+      style="
+        font-size: clamp(24px, 3vw, 36px);
+        font-weight: 400;
+        color: #F0F0F0;
+        letter-spacing: -0.02em;
+        font-family: 'Space Grotesk', 'Helvetica Neue', sans-serif;
+        margin-bottom: 8px;
+      "
+    >
+      AI Model Predictions
+    </h1>
+    <p style="color: #8A8A93; font-size: 14px;">
+      Predictive maintenance logs, telemetry alerts, and automated degradation analysis.
+    </p>
+  </div>
+
+  <!-- Search & Filter Controls -->
+  <div
+    style="
+      background-color: #0A0A0A;
+      border: 1px solid rgba(240,240,240,0.06);
+      padding: 16px 20px;
+      margin-bottom: 32px;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      align-items: center;
+    "
+  >
+    <div style="display: flex; gap: 12px; flex: 1; min-width: 260px; max-width: 480px;">
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        placeholder="Search by message or engine..."
+        style="
+          flex: 1;
+          background-color: #111114;
+          color: #F0F0F0;
+          border: 1px solid rgba(240,240,240,0.12);
+          padding: 10px 14px;
+          font-size: 13px;
+        "
+      />
+    </div>
+
+    <div style="display: flex; gap: 8px; align-items: center;">
+      <span style="font-size: 11px; color: #8A8A93; text-transform: uppercase; letter-spacing: 0.08em; font-family: 'Space Grotesk', sans-serif; margin-right: 8px;">Filter severity:</span>
+      <button
+        (click)="filterType = 'all'"
+        [style.border-color]="filterType === 'all' ? '#F28C28' : 'rgba(240,240,240,0.08)'"
+        [style.color]="filterType === 'all' ? '#F28C28' : '#8A8A93'"
+        style="background: none; border: 1px solid; padding: 6px 12px; font-size: 11px; font-weight: 500; cursor: pointer; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif;"
+      >
+        All
+      </button>
+      <button
+        (click)="filterType = 'critical'"
+        [style.border-color]="filterType === 'critical' ? '#ff6b6b' : 'rgba(240,240,240,0.08)'"
+        [style.color]="filterType === 'critical' ? '#ff6b6b' : '#8A8A93'"
+        style="background: none; border: 1px solid; padding: 6px 12px; font-size: 11px; font-weight: 500; cursor: pointer; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif;"
+      >
+        Critical/Danger
+      </button>
+      <button
+        (click)="filterType = 'warning'"
+        [style.border-color]="filterType === 'warning' ? '#F28C28' : 'rgba(240,240,240,0.08)'"
+        [style.color]="filterType === 'warning' ? '#F28C28' : '#8A8A93'"
+        style="background: none; border: 1px solid; padding: 6px 12px; font-size: 11px; font-weight: 500; cursor: pointer; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif;"
+      >
+        Warning
+      </button>
+      <button
+        (click)="filterType = 'normal'"
+        [style.border-color]="filterType === 'normal' ? '#00A8E8' : 'rgba(240,240,240,0.08)'"
+        [style.color]="filterType === 'normal' ? '#00A8E8' : '#8A8A93'"
+        style="background: none; border: 1px solid; padding: 6px 12px; font-size: 11px; font-weight: 500; cursor: pointer; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif;"
+      >
+        Normal
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" style="padding: 60px; text-align: center; color: #8A8A93; font-size: 14px;">
+    Analyzing data models and loading predictions feed...
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && filteredAlerts.length === 0" style="background-color: #0A0A0A; border: 1px dashed rgba(240,240,240,0.1); padding: 60px; text-align: center; color: #8A8A93; font-size: 14px;">
+    No model predictions match the selected filter.
+  </div>
+
+  <!-- Predictions Feed -->
+  <div *ngIf="!isLoading && filteredAlerts.length > 0" style="display: flex; flex-direction: column; gap: 16px;">
+    <article
+      *ngFor="let alert of filteredAlerts"
+      style="
+        background-color: #0A0A0A;
+        border: 1px solid rgba(240,240,240,0.06);
+        position: relative;
+        overflow: hidden;
+      "
+      [style.padding]="alert.type?.toLowerCase() === 'normal' ? '12px 18px' : '20px 24px'"
+      [style.border-left]="'4px solid ' + getAlertColor(alert.type)"
+    >
+      <div 
+        [style.margin-bottom]="alert.type?.toLowerCase() === 'normal' ? '6px' : '12px'"
+        style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap;"
+      >
+        <div>
+          <span
+            [style.color]="getAlertColor(alert.type)"
+            [style.border]="'1px solid ' + getAlertColor(alert.type)"
+            style="
+              padding: 2px 8px;
+              font-size: 10px;
+              letter-spacing: 0.1em;
+              text-transform: uppercase;
+              font-weight: 700;
+              font-family: 'Space Grotesk', sans-serif;
+              display: inline-block;
+              margin-bottom: 8px;
+            "
+          >
+            {{ alert.type || 'INFO' }}
+          </span>
+          <h3 
+            [style.font-size]="alert.type?.toLowerCase() === 'normal' ? '14px' : '16px'"
+            style="font-weight: 500; color: #F0F0F0; margin: 0; line-height: 1.4;"
+          >
+            Engine: {{ alert.engineName || 'Unknown Engine' }}
+          </h3>
+        </div>
+        <span style="font-size: 12px; color: #8A8A93;">
+          {{ alert.timestamp | date:'MMM d, y, h:mm:ss a' }}
+        </span>
+      </div>
+
+      <p 
+        [style.font-size]="alert.type?.toLowerCase() === 'normal' ? '12px' : '14px'"
+        [style.margin]="alert.type?.toLowerCase() === 'normal' ? '0' : '0 0 20px 0'"
+        style="color: #E0E0E0; line-height: 1.6; max-width: 800px;"
+      >
+        {{ alert.message }}
+      </p>
+
+      <!-- Interactive Actions (Manager & Admin only) - Restricted to non-NORMAL alerts -->
+      <div
+        *ngIf="auth.hasRole(['admin', 'manager']) && alert.type?.toLowerCase() !== 'normal'"
+        style="
+          border-top: 1px solid rgba(240,240,240,0.04);
+          padding-top: 16px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 16px;
+        "
+      >
+        <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #8A8A93; font-family: 'Space Grotesk', sans-serif;">
+          Status: 
+          <span [style.color]="alert.status === 'CONVERTED' ? '#00A8E8' : '#F28C28'" style="font-weight: 700;">
+            {{ alert.status || 'PENDING' }}
+          </span>
+        </span>
+
+        <div *ngIf="alert.status !== 'CONVERTED'" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+          <div *ngIf="alert.errorMessage" style="color: #ff6b6b; font-size: 12px; margin-right: 8px;">
+            {{ alert.errorMessage }}
+          </div>
+          
+          <select
+            [(ngModel)]="selectedTeamIds[alert.id]"
+            [name]="'team-' + alert.id"
+            style="
+              background-color: #111114;
+              color: #F0F0F0;
+              border: 1px solid rgba(240,240,240,0.12);
+              padding: 8px 12px;
+              font-size: 12px;
+            "
+          >
+            <option value="">Assign team...</option>
+            <option *ngFor="let team of teams" [value]="team.id">{{ team.nom }}</option>
+          </select>
+
+          <button
+            (click)="convertAlert(alert)"
+            [disabled]="alert.isConverting"
+            style="
+              background-color: #F28C28;
+              color: #0A0A0A;
+              border: none;
+              padding: 9px 18px;
+              font-size: 11px;
+              font-weight: 700;
+              text-transform: uppercase;
+              cursor: pointer;
+              letter-spacing: 0.05em;
+              font-family: 'Space Grotesk', sans-serif;
+            "
+          >
+            {{ alert.isConverting ? 'Converting...' : 'Convert to Task' }}
+          </button>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>

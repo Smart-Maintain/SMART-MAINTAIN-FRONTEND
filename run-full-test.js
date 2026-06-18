@@ -4,12 +4,13 @@ const PORT = process.env.PORT || '4200';
 const BASE = `http://localhost:${PORT}`;
 
 (async () => {
-  console.log('Starting full E2E test in visible mode...');
+  const isHeadless = process.env.HEADLESS !== 'false';
+  console.log(`Starting full E2E test (headless: ${isHeadless})...`);
   const browser = await puppeteer.launch({ 
-    headless: false, // Make browser visible!
-    slowMo: 30, // Slow down operations so you can see them
-    defaultViewport: null,
-    args: ['--start-maximized']
+    headless: isHeadless ? 'new' : false, 
+    slowMo: isHeadless ? 0 : 30, 
+    defaultViewport: isHeadless ? { width: 1280, height: 800 } : null,
+    args: isHeadless ? [] : ['--start-maximized']
   });
   const page = await browser.newPage();
 
@@ -26,7 +27,7 @@ const BASE = `http://localhost:${PORT}`;
     await new Promise(r => setTimeout(r, 4000));
     
     console.log('Navigating to Admin Dashboard...');
-    await page.goto(`${BASE}/dashboard/admin`);
+    await page.goto(`${BASE}/admin/dashboard`);
     await new Promise(r => setTimeout(r, 4000));
 
     console.log('Admin logged in, URL:', page.url());
@@ -45,7 +46,13 @@ const BASE = `http://localhost:${PORT}`;
     if (!teamFormExists) throw new Error("Team form not found");
     
     await page.type('input[name="teamName"]', 'Alpha Squad Test');
-    await page.type('input[name="teamSpeciality"]', 'Engine Maintenance');
+    await page.evaluate(() => {
+      const specialtySelect = document.querySelector('select[name="teamSpeciality"]');
+      if (specialtySelect) {
+        specialtySelect.selectedIndex = 0;
+        specialtySelect.dispatchEvent(new Event('change'));
+      }
+    });
     await page.evaluate(() => {
       const leaderSelect = document.querySelector('select[name="leaderEngineer"]');
       if(leaderSelect && leaderSelect.options.length > 1) leaderSelect.selectedIndex = 1;
@@ -127,15 +134,16 @@ const BASE = `http://localhost:${PORT}`;
     await new Promise(r => setTimeout(r, 4000));
     
     console.log('Navigating to Technician Dashboard...');
-    await page.goto(`${BASE}/dashboard/technician`);
+    await page.goto(`${BASE}/technician/tasks`);
     await new Promise(r => setTimeout(r, 4000));
 
     console.log('6. Adding note and checking task...');
     await page.evaluate(() => {
-      const textareas = Array.from(document.querySelectorAll('textarea'));
-      if(textareas.length > 0) {
-        textareas[0].value = 'Checked and looks good';
-        textareas[0].dispatchEvent(new Event('input'));
+      const inputs = Array.from(document.querySelectorAll('input'));
+      const noteInput = inputs.find(i => i.placeholder && i.placeholder.includes('note'));
+      if (noteInput) {
+        noteInput.value = 'Checked and looks good';
+        noteInput.dispatchEvent(new Event('input'));
       }
       const btns = Array.from(document.querySelectorAll('button'));
       const saveBtn = btns.find(b => b.textContent.includes('Save'));

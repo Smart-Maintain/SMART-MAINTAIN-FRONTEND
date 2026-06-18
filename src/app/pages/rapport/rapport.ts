@@ -38,7 +38,14 @@ export class Rapport implements OnInit {
     if (this.taskId) {
       this.loadData();
     } else {
-      this.router.navigate(['/dashboard']);
+      const role = this.auth.user()?.role;
+      if (role === 'technician') {
+        this.router.navigate(['/technician/tasks']);
+      } else if (role) {
+        this.router.navigate([`/${role}/dashboard`]);
+      } else {
+        this.router.navigate(['/']);
+      }
     }
   }
 

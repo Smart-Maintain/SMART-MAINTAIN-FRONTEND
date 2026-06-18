@@ -58,7 +58,7 @@
         *ngFor="let item of filteredNav"
         [routerLink]="item.path"
         routerLinkActive="active-link"
-        [routerLinkActiveOptions]="{exact: item.path === '/dashboard'}"
+        [routerLinkActiveOptions]="{exact: item.path.endsWith('/dashboard') || item.path.endsWith('/tasks')}"
         style="
           display: flex;
           align-items: center;
@@ -87,29 +87,32 @@
         border-top: 1px solid rgba(240,240,240,0.06);
       "
     >
-      <!-- Notification Icon -->
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; position: relative;">
+      <!-- Notification and Bug Actions -->
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; position: relative;">
         <button
           (click)="toggleNotificationsPanel()"
+          title="Alerts"
+          aria-label="Alerts"
           style="
             background: none;
             border: 1px solid rgba(240,240,240,0.12);
             color: #F0F0F0;
-            padding: 8px;
+            width: 40px;
+            height: 40px;
+            padding: 0;
             cursor: pointer;
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 4px;
-            width: 100%;
+            border-radius: 50%;
+            flex: 0 0 40px;
             transition: all 0.2s ease;
           "
           onmouseover="this.style.borderColor='rgba(240,240,240,0.25)'"
           onmouseout="this.style.borderColor='rgba(240,240,240,0.12)'"
         >
-          <span style="font-size: 16px;">🔔</span>
-          <span *ngIf="!collapsed" style="font-size: 11px; margin-left: 8px; font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.1em; text-transform: uppercase; color: #8A8A93;">Alerts</span>
+          <span style="font-size: 16px;">⚠</span>
           <span
             *ngIf="unreadNotifications.length > 0"
             style="
@@ -131,6 +134,31 @@
           >
             {{ unreadNotifications.length }}
           </span>
+        </button>
+
+        <button
+          (click)="toggleBugModal()"
+          title="Report a Bug"
+          aria-label="Report a Bug"
+          style="
+            background-color: #0A0A0A;
+            border: 1px solid rgba(240,240,240,0.12);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            border-radius: 50%;
+            flex: 0 0 40px;
+            transition: all 0.3s ease;
+          "
+          onmouseover="this.style.borderColor='#ff6b6b'"
+          onmouseout="this.style.borderColor='rgba(240,240,240,0.12)'"
+        >
+          <span style="font-size: 18px;">🪲</span>
         </button>
       </div>
 
@@ -302,32 +330,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Floating Bug Icon -->
-    <button
-      (click)="toggleBugModal()"
-      [style.left]="collapsed ? '84px' : '264px'"
-      style="
-        position: fixed;
-        bottom: 24px;
-        width: 44px;
-        height: 44px;
-        background-color: #0A0A0A;
-        border: 1px solid rgba(240,240,240,0.12);
-        box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-        border-radius: 50%;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 999;
-        transition: all 0.3s ease;
-      "
-      onmouseover="this.style.borderColor='#ff6b6b'"
-      onmouseout="this.style.borderColor='rgba(240,240,240,0.12)'"
-    >
-      <span style="font-size: 18px;">🪲</span>
-    </button>
 
     <!-- Bug Modal -->
     <div

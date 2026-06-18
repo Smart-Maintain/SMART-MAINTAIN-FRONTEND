@@ -128,23 +128,27 @@ export class Dashboard implements OnInit {
     if (role === 'admin') {
       return [
         { path: '/admin/dashboard', label: 'Admin Control', icon: '◆' },
+        { path: '/admin/predictions', label: 'Predictions', icon: '🔔' },
         { path: '/admin/chat', label: 'AI Assistant', icon: '✦' }
       ];
     } else if (role === 'manager') {
       return [
         { path: '/manager/dashboard', label: 'Overview', icon: '■' },
         { path: '/manager/admin', label: 'Admin Control', icon: '◆' },
+        { path: '/manager/predictions', label: 'Predictions', icon: '🔔' },
         { path: '/manager/tasks', label: 'Task Execution', icon: '●' },
         { path: '/manager/chat', label: 'AI Assistant', icon: '✦' }
       ];
     } else if (role === 'engineer') {
       return [
         { path: '/engineer/dashboard', label: 'Overview', icon: '■' },
+        { path: '/engineer/predictions', label: 'Predictions', icon: '🔔' },
         { path: '/engineer/tasks', label: 'Task Execution', icon: '●' },
         { path: '/engineer/chat', label: 'AI Assistant', icon: '✦' }
       ];
     } else if (role === 'technician') {
       return [
+        { path: '/technician/predictions', label: 'Predictions', icon: '🔔' },
         { path: '/technician/tasks', label: 'Task Execution', icon: '●' },
         { path: '/technician/chat', label: 'AI Assistant', icon: '✦' }
       ];

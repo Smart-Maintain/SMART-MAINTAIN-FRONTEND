@@ -13,7 +13,7 @@ import { DataService } from '../../services/data.service';
   styleUrl: './admin-manager.scss'
 })
 export class AdminManager implements OnInit {
-  activeTab: 'overview' | 'teams' | 'assignments' | 'reports' | 'team' | 'costs' | 'accounts' | 'feedbacks' = 'overview';
+  activeTab: 'overview' | 'teams' | 'assignments' | 'reports' | 'team' | 'costs' | 'accounts' | 'feedbacks' | 'engines' = 'overview';
 
   performanceData = [
     { metric: 'Availability', value: 99.7 },
@@ -32,12 +32,7 @@ export class AdminManager implements OnInit {
     { month: 'May', scheduled: 510000, unscheduled: 32000 },
   ];
 
-  teamPerformance = [
-    { name: 'Team Alpha', tasks: 24, efficiency: 94 },
-    { name: 'Team Bravo', tasks: 18, efficiency: 88 },
-    { name: 'Team Charlie', tasks: 31, efficiency: 91 },
-    { name: 'Team Delta', tasks: 15, efficiency: 96 },
-  ];
+  dynamicTeamPerformance: any[] = [];
 
   tasks: any[] = [];
   isLoadingTasks = true;
@@ -45,6 +40,7 @@ export class AdminManager implements OnInit {
   maintenances: any[] = [];
   engineers: any[] = [];
   technicians: any[] = [];
+  managers: any[] = [];
   equipements: any[] = [];
   reports: any[] = [];
   selectedTechnicianIds: string[] = [];
@@ -65,6 +61,16 @@ export class AdminManager implements OnInit {
   createUserModalOpen = false;
 
   expandedTaskId: string | null = null;
+
+  specialties = [
+    'Engine Maintenance',
+    'Avionics',
+    'Landing Gear',
+    'Hydraulics',
+    'Airframe Structural',
+    'Electrical Systems',
+    'Systems Calibration'
+  ];
   
   toggleTask(id: string) {
     this.expandedTaskId = this.expandedTaskId === id ? null : id;
@@ -72,8 +78,16 @@ export class AdminManager implements OnInit {
 
   teamForm = {
     nom: '',
-    specialite: '',
+    specialite: 'Engine Maintenance',
     leaderEngineerId: '',
+  };
+
+  editingTeam: any = null;
+  editTeamForm = {
+    nom: '',
+    specialite: 'Engine Maintenance',
+    leaderEngineerId: '',
+    technicianIds: [] as string[]
   };
 
   assignmentForm = {
@@ -100,6 +114,22 @@ export class AdminManager implements OnInit {
     { id: 3, engineName: 'GP-7200', status: 'critical' },
   ];
 
+  // Engine Addition properties
+  taxonomies: any[] = [];
+  engineForm = {
+    nom: '',
+    reference: '',
+    model: '',
+    status: 'En service',
+    taxonomieId: ''
+  };
+  taxonomyForm = {
+    code: '',
+    nom: '',
+    description: ''
+  };
+  showCreateTaxonomy = false;
+
   constructor(public auth: AuthService, private dataService: DataService) {}
 
   ngOnInit() {
@@ -107,6 +137,7 @@ export class AdminManager implements OnInit {
     this.loadOperationsData();
     this.loadAccounts();
     this.loadFeedbacks();
+    this.loadTaxonomies();
   }
 
   loadTasks() {
@@ -119,12 +150,16 @@ export class AdminManager implements OnInit {
           engineName: t.taxonomie?.nom || 'Unknown Engine',
           priority: t.priorite || 'medium',
           status: t.status || 'pending',
-          dueDate: '2026-05-20',
+          dueDate: '2026-06-01',
           equipeId: t.equipe?.id || '',
           maintenanceId: t.maintenance?.id || '',
-          taxonomieId: t.taxonomie?.id || ''
+          taxonomieId: t.taxonomie?.id || '',
+          description: t.description,
+          technicianNote: t.note,
+          category: t.taxonomie?.code || 'General'
         }));
         this.isLoadingTasks = false;
+        this.calculateTeamPerformance();
       },
       error: (err) => {
         console.error('Failed to load tasks', err);
@@ -134,7 +169,10 @@ export class AdminManager implements OnInit {
   }
 
   loadOperationsData() {
-    this.dataService.getTeams().subscribe(teams => this.teams = teams);
+    this.dataService.getTeams().subscribe(teams => {
+      this.teams = teams;
+      this.calculateTeamPerformance();
+    });
     this.dataService.getMaintenances().subscribe(maintenances => this.maintenances = maintenances);
     this.dataService.getEquipements().subscribe(equipements => {
       this.equipements = equipements.map(e => ({
@@ -147,15 +185,87 @@ export class AdminManager implements OnInit {
     });
     this.dataService.getUsersByRole('INGENIEUR').subscribe({
       next: users => this.engineers = users,
-      error: () => this.engineers = [{ id: '00000000-0000-0000-0000-000000000001', prenom: 'Engineer', nom: 'Lead', email: 'engineer@test.com' }]
+      error: () => this.engineers = []
     });
     this.dataService.getUsersByRole('OPERATEUR').subscribe({
       next: users => this.technicians = users,
-      error: () => this.technicians = [{ id: '00000000-0000-0000-0000-000000000002', prenom: 'Tech', nom: 'One', email: 'tech1@test.com' }]
+      error: () => this.technicians = []
+    });
+    this.dataService.getUsersByRole('MANAGER' as any).subscribe({
+      next: users => this.managers = users,
+      error: () => this.managers = []
     });
   }
 
-  setActiveTab(tab: 'overview' | 'teams' | 'assignments' | 'reports' | 'team' | 'costs' | 'accounts' | 'feedbacks') {
+  loadTaxonomies() {
+    this.dataService.getTaxonomies().subscribe({
+      next: data => this.taxonomies = data,
+      error: err => console.error('Failed to load taxonomies', err)
+    });
+  }
+
+  createTaxonomy() {
+    if (!this.taxonomyForm.code || !this.taxonomyForm.nom) return;
+    this.dataService.createTaxonomie(this.taxonomyForm).subscribe({
+      next: () => {
+        this.taxonomyForm = { code: '', nom: '', description: '' };
+        this.showCreateTaxonomy = false;
+        this.loadTaxonomies();
+      },
+      error: err => console.error('Failed to create taxonomy', err)
+    });
+  }
+
+  createEngine() {
+    if (!this.engineForm.nom || !this.engineForm.reference || !this.engineForm.taxonomieId) return;
+    const payload = {
+      nom: this.engineForm.nom,
+      reference: this.engineForm.reference,
+      model: this.engineForm.model,
+      status: this.engineForm.status,
+      taxonomie: {
+        id: Number(this.engineForm.taxonomieId)
+      }
+    };
+    this.dataService.createEquipement(payload).subscribe({
+      next: () => {
+        this.engineForm = { nom: '', reference: '', model: '', status: 'En service', taxonomieId: '' };
+        this.loadOperationsData();
+      },
+      error: err => console.error('Failed to create engine', err)
+    });
+  }
+
+  get leaderCandidates() {
+    return [...this.engineers, ...this.managers];
+  }
+
+  get technicianCandidates() {
+    return [...this.technicians, ...this.managers];
+  }
+
+  calculateTeamPerformance() {
+    if (!this.teams || this.teams.length === 0) return;
+    this.dynamicTeamPerformance = this.teams.map(team => {
+      const teamTasks = this.tasks.filter(t => t.equipeId === team.id);
+      const completed = teamTasks.filter(t => t.status === 'completed').length;
+      const left = teamTasks.filter(t => t.status !== 'completed').length;
+      const assigned = teamTasks.length;
+      const efficiency = assigned > 0 ? Math.round((completed / assigned) * 100) : 95;
+
+      return {
+        id: team.id,
+        name: team.nom,
+        specialite: team.specialite,
+        assigned: assigned,
+        completed: completed,
+        left: left,
+        efficiency: efficiency
+      };
+    });
+  }
+
+  setActiveTab(tab: 'overview' | 'teams' | 'assignments' | 'reports' | 'team' | 'costs' | 'accounts' | 'feedbacks' | 'engines') {
     this.activeTab = tab;
   }
 
@@ -178,23 +288,64 @@ export class AdminManager implements OnInit {
       return;
     }
 
-    const leader = this.engineers.find(engineer => engineer.id === this.teamForm.leaderEngineerId);
-    const selectedTechnicians = this.technicians.filter(technician => this.selectedTechnicianIds.includes(technician.id));
+    const leader = this.leaderCandidates.find(user => user.id === this.teamForm.leaderEngineerId);
+    const selectedTechUsers = this.technicianCandidates.filter(user => this.selectedTechnicianIds.includes(user.id));
+    
     const payload = {
       ...this.teamForm,
       leaderEngineerName: this.userLabel(leader),
       technicianIds: this.selectedTechnicianIds,
-      technicianNames: selectedTechnicians.map(technician => this.userLabel(technician))
+      technicianNames: selectedTechUsers.map(user => this.userLabel(user))
     };
 
     this.dataService.createTeam(payload).subscribe({
       next: () => {
-        this.teamForm = { nom: '', specialite: '', leaderEngineerId: '' };
+        this.teamForm = { nom: '', specialite: 'Engine Maintenance', leaderEngineerId: '' };
         this.selectedTechnicianIds = [];
         this.loadOperationsData();
       },
       error: (err) => {
         this.errorMessage = err.error?.message || 'Failed to create team. Please try again.';
+      }
+    });
+  }
+
+  openEditTeam(team: any) {
+    this.editingTeam = team;
+    this.editTeamForm = {
+      nom: team.nom,
+      specialite: team.specialite || 'Engine Maintenance',
+      leaderEngineerId: team.leaderEngineerId || '',
+      technicianIds: team.technicianIds || []
+    };
+  }
+
+  closeEditTeam() {
+    this.editingTeam = null;
+  }
+
+  saveTeam() {
+    if (!this.editingTeam || !this.editTeamForm.leaderEngineerId || this.editTeamForm.technicianIds.length === 0) return;
+
+    const leader = this.leaderCandidates.find(user => user.id === this.editTeamForm.leaderEngineerId);
+    const selectedTechUsers = this.technicianCandidates.filter(user => this.editTeamForm.technicianIds.includes(user.id));
+
+    const payload = {
+      nom: this.editTeamForm.nom,
+      specialite: this.editTeamForm.specialite,
+      leaderEngineerId: this.editTeamForm.leaderEngineerId,
+      leaderEngineerName: this.userLabel(leader),
+      technicianIds: this.editTeamForm.technicianIds,
+      technicianNames: selectedTechUsers.map(user => this.userLabel(user))
+    };
+
+    this.dataService.updateTeam(this.editingTeam.id, payload).subscribe({
+      next: () => {
+        this.closeEditTeam();
+        this.loadOperationsData();
+      },
+      error: (err) => {
+        alert(err.error?.message || 'Failed to update team.');
       }
     });
   }
@@ -278,9 +429,11 @@ export class AdminManager implements OnInit {
 
   getBadgeColor(type: string, value: string) {
     if (type === 'priority') {
-      return value === 'critical' ? '#ff6b6b' : value === 'high' ? '#F28C28' : value === 'medium' ? '#00A8E8' : '#8A8A93';
+      const v = value?.toLowerCase() || '';
+      return v === 'critical' ? '#ff6b6b' : v === 'high' ? '#F28C28' : v === 'medium' ? '#00A8E8' : '#8A8A93';
     } else if (type === 'status') {
-      return value === 'completed' ? '#00A8E8' : value === 'in_progress' ? '#F28C28' : value === 'pending' ? '#8A8A93' : '#ff6b6b';
+      const v = value?.toLowerCase() || '';
+      return v === 'completed' ? '#00A8E8' : v === 'in_progress' ? '#F28C28' : v === 'pending' ? '#8A8A93' : '#ff6b6b';
     }
     return '#8A8A93';
   }

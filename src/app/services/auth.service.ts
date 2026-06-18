@@ -66,7 +66,7 @@ export class AuthService {
         } else if (normalizedRole === 'technician') {
           this.router.navigate(['/technician/tasks']);
         } else {
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/']);
         }
       }),
       catchError((error) => {

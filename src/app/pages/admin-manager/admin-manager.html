@@ -142,6 +142,26 @@
     </button>
     <button
       *ngIf="auth.hasRole(['admin'])"
+      (click)="setActiveTab('engines')"
+      [style.background-color]="activeTab === 'engines' ? 'rgba(242,140,40,0.08)' : 'transparent'"
+      [style.border-bottom]="activeTab === 'engines' ? '2px solid #F28C28' : '2px solid transparent'"
+      [style.color]="activeTab === 'engines' ? '#F28C28' : '#8A8A93'"
+      style="
+        padding: 12px 24px;
+        border: none;
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      "
+    >
+      Engines
+    </button>
+    <button
+      *ngIf="auth.hasRole(['admin'])"
       (click)="setActiveTab('accounts')"
       [style.background-color]="activeTab === 'accounts' ? 'rgba(242,140,40,0.08)' : 'transparent'"
       [style.border-bottom]="activeTab === 'accounts' ? '2px solid #F28C28' : '2px solid transparent'"
@@ -318,7 +338,7 @@
 
                 <div>
                   <h4 style="font-size: 11px; letter-spacing: 0.1em; color: #8A8A93; text-transform: uppercase; margin-bottom: 8px; font-family: 'Space Grotesk', sans-serif;">Rapport</h4>
-                  <a [routerLink]="['/dashboard/rapport', task.id]" style="display: inline-block; background-color: #ff6b6b; color: #0A0A0A; padding: 10px 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; text-decoration: none; font-family: 'Space Grotesk', sans-serif; text-align: center; width: 100%;">
+                  <a [routerLink]="['/admin/rapport', task.id]" style="display: inline-block; background-color: #ff6b6b; color: #0A0A0A; padding: 10px 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; text-decoration: none; font-family: 'Space Grotesk', sans-serif; text-align: center; width: 100%;">
                     Open Full Rapport
                   </a>
                 </div>
@@ -347,6 +367,7 @@
 
   <ng-container *ngIf="activeTab === 'teams'">
     <div style="display: grid; grid-template-columns: minmax(280px, 420px) 1fr; gap: 24px;">
+      <!-- Create Team Form -->
       <form (ngSubmit)="createTeam()" style="background-color: #0A0A0A; border: 1px solid rgba(240,240,240,0.06); padding: 24px; display: flex; flex-direction: column; gap: 14px;">
         <h3 style="font-size: 14px; font-weight: 500; color: #F0F0F0; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; font-family: 'Space Grotesk', sans-serif;">
           Create Team
@@ -355,29 +376,73 @@
           {{ errorMessage }}
         </div>
         <input name="teamName" [(ngModel)]="teamForm.nom" required placeholder="Team name" style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;" />
-        <input name="teamSpeciality" [(ngModel)]="teamForm.specialite" required placeholder="Speciality" style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;" />
+        
+        <!-- Specialty Dropdown -->
+        <select name="teamSpeciality" [(ngModel)]="teamForm.specialite" required style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;">
+          <option *ngFor="let spec of specialties" [value]="spec">{{ spec }}</option>
+        </select>
+
         <select name="leaderEngineer" [(ngModel)]="teamForm.leaderEngineerId" required style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;">
-          <option value="">Leader engineer</option>
-          <option *ngFor="let engineer of engineers" [value]="engineer.id">{{ userLabel(engineer) }}</option>
+          <option value="">Leader engineer/manager</option>
+          <option *ngFor="let leader of leaderCandidates" [value]="leader.id">{{ userLabel(leader) }}</option>
         </select>
         <select multiple name="technicians" [(ngModel)]="selectedTechnicianIds" required style="min-height: 120px; background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;">
-          <option *ngFor="let technician of technicians" [value]="technician.id">{{ userLabel(technician) }}</option>
+          <option *ngFor="let technician of technicianCandidates" [value]="technician.id">{{ userLabel(technician) }}</option>
         </select>
         <button type="submit" style="background-color: #F28C28; color: #0A0A0A; border: none; padding: 12px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; cursor: pointer;">
           Create Team
         </button>
       </form>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
-        <article *ngFor="let team of teams" style="background-color: #0A0A0A; border: 1px solid rgba(240,240,240,0.06); padding: 20px;">
-          <h3 style="font-size: 16px; color: #F0F0F0; margin-bottom: 8px;">{{ team.nom }}</h3>
-          <p style="font-size: 12px; color: #8A8A93; margin-bottom: 12px;">{{ team.specialite }}</p>
-          <p style="font-size: 12px; color: #00A8E8; margin-bottom: 8px;">Leader: {{ team.leaderEngineerName || 'Unassigned' }}</p>
-          <p style="font-size: 12px; color: #8A8A93; margin-bottom: 16px;">Technicians: {{ team.technicianNames?.join(', ') || 'None' }}</p>
-          <button (click)="deleteTeam(team.id)" style="background: none; border: 1px solid #ff6b6b; color: #ff6b6b; padding: 6px 10px; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;">
-            Delete
-          </button>
-        </article>
+      <!-- Teams List & Editor -->
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+          <article *ngFor="let team of teams" style="background-color: #0A0A0A; border: 1px solid rgba(240,240,240,0.06); padding: 20px;">
+            <h3 style="font-size: 16px; color: #F0F0F0; margin-bottom: 8px;">{{ team.nom }}</h3>
+            <p style="font-size: 12px; color: #8A8A93; margin-bottom: 12px;">Speciality: {{ team.specialite }}</p>
+            <p style="font-size: 12px; color: #00A8E8; margin-bottom: 8px;">Leader: {{ team.leaderEngineerName || 'Unassigned' }}</p>
+            <p style="font-size: 12px; color: #8A8A93; margin-bottom: 16px;">Technicians/Members: {{ team.technicianNames?.join(', ') || 'None' }}</p>
+            
+            <div style="display: flex; gap: 8px; margin-top: 12px;">
+              <button (click)="openEditTeam(team)" style="background: none; border: 1px solid #00A8E8; color: #00A8E8; padding: 6px 12px; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;">
+                Edit
+              </button>
+              <button (click)="deleteTeam(team.id)" style="background: none; border: 1px solid #ff6b6b; color: #ff6b6b; padding: 6px 10px; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;">
+                Delete
+              </button>
+            </div>
+          </article>
+        </div>
+
+        <!-- Edit Team Panel -->
+        <div *ngIf="editingTeam" style="background-color: #0A0A0A; border: 1px solid rgba(240,240,240,0.12); padding: 24px; margin-top: 16px;">
+          <h3 style="font-size: 14px; font-weight: 500; color: #F0F0F0; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 16px; font-family: 'Space Grotesk', sans-serif;">
+            Edit Team: {{ editingTeam.nom }}
+          </h3>
+          <div style="display: flex; flex-direction: column; gap: 14px;">
+            <input name="editTeamName" [(ngModel)]="editTeamForm.nom" required placeholder="Team name" style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;" />
+            
+            <select name="editTeamSpeciality" [(ngModel)]="editTeamForm.specialite" required style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;">
+              <option *ngFor="let spec of specialties" [value]="spec">{{ spec }}</option>
+            </select>
+
+            <select name="editLeaderEngineer" [(ngModel)]="editTeamForm.leaderEngineerId" required style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;">
+              <option value="">Leader engineer/manager</option>
+              <option *ngFor="let leader of leaderCandidates" [value]="leader.id">{{ userLabel(leader) }}</option>
+            </select>
+            <select multiple name="editTechnicians" [(ngModel)]="editTeamForm.technicianIds" required style="min-height: 120px; background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;">
+              <option *ngFor="let technician of technicianCandidates" [value]="technician.id">{{ userLabel(technician) }}</option>
+            </select>
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+              <button (click)="closeEditTeam()" style="background: none; border: 1px solid rgba(240,240,240,0.12); color: #8A8A93; padding: 10px 20px; font-size: 11px; text-transform: uppercase; cursor: pointer;">
+                Cancel
+              </button>
+              <button (click)="saveTeam()" style="background-color: #00A8E8; color: #0A0A0A; border: none; padding: 10px 24px; font-size: 11px; font-weight: 700; text-transform: uppercase; cursor: pointer;">
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </ng-container>
@@ -444,17 +509,26 @@
 
   <ng-container *ngIf="activeTab === 'team'">
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
-      <div *ngFor="let team of teamPerformance" style="background-color: #0A0A0A; border: 1px solid rgba(240,240,240,0.06); padding: 24px;">
-        <h3 style="font-size: 16px; font-weight: 500; color: #F0F0F0; font-family: 'Space Grotesk', sans-serif; margin-bottom: 16px;">
+      <div *ngFor="let team of dynamicTeamPerformance" style="background-color: #0A0A0A; border: 1px solid rgba(240,240,240,0.06); padding: 24px;">
+        <h3 style="font-size: 16px; font-weight: 500; color: #F0F0F0; font-family: 'Space Grotesk', sans-serif; margin-bottom: 4px;">
           {{ team.name }}
         </h3>
-        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+        <p style="font-size: 11px; color: #8A8A93; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em;">{{ team.specialite }}</p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
           <div>
-            <div style="font-size: 24px; font-weight: 700; color: #00A8E8; font-family: 'Space Grotesk', sans-serif;">{{ team.tasks }}</div>
-            <div style="font-size: 10px; color: #8A8A93; letter-spacing: 0.08em; text-transform: uppercase;">Tasks</div>
+            <div style="font-size: 20px; font-weight: 700; color: #00A8E8; font-family: 'Space Grotesk', sans-serif;">{{ team.assigned }}</div>
+            <div style="font-size: 10px; color: #8A8A93; letter-spacing: 0.08em; text-transform: uppercase;">Jobs Assigned</div>
           </div>
           <div>
-            <div style="font-size: 24px; font-weight: 700; color: #F28C28; font-family: 'Space Grotesk', sans-serif;">{{ team.efficiency }}%</div>
+            <div style="font-size: 20px; font-weight: 700; color: #00A8E8; font-family: 'Space Grotesk', sans-serif;">{{ team.completed }}</div>
+            <div style="font-size: 10px; color: #8A8A93; letter-spacing: 0.08em; text-transform: uppercase;">Jobs Done</div>
+          </div>
+          <div>
+            <div style="font-size: 20px; font-weight: 700; color: #ff6b6b; font-family: 'Space Grotesk', sans-serif;">{{ team.left }}</div>
+            <div style="font-size: 10px; color: #8A8A93; letter-spacing: 0.08em; text-transform: uppercase;">Tasks Left</div>
+          </div>
+          <div>
+            <div style="font-size: 20px; font-weight: 700; color: #F28C28; font-family: 'Space Grotesk', sans-serif;">{{ team.efficiency }}%</div>
             <div style="font-size: 10px; color: #8A8A93; letter-spacing: 0.08em; text-transform: uppercase;">Efficiency</div>
           </div>
         </div>
@@ -485,6 +559,96 @@
         <div style="display: flex; align-items: center; gap: 8px;">
           <div style="width: 12px; height: 12px; background-color: #F28C28;"></div>
           <span style="font-size: 12px; color: #8A8A93;">Unscheduled / Breakdown</span>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="activeTab === 'engines' && auth.hasRole(['admin'])">
+    <div style="display: grid; grid-template-columns: minmax(280px, 420px) 1fr; gap: 24px; font-family: 'Inter', sans-serif;">
+      <!-- Create Engine and Taxonomy Forms -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        <!-- Add Engine Form -->
+        <form (ngSubmit)="createEngine()" style="background-color: #0A0A0A; border: 1px solid rgba(240,240,240,0.06); padding: 24px; display: flex; flex-direction: column; gap: 14px;">
+          <h3 style="font-size: 14px; font-weight: 500; color: #F0F0F0; letter-spacing: 0.1em; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif; margin-bottom: 6px;">
+            Add New Engine
+          </h3>
+          <input name="engineName" [(ngModel)]="engineForm.nom" required placeholder="Engine name (e.g. Turbine GP-7200)" style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;" />
+          <input name="engineReference" [(ngModel)]="engineForm.reference" required placeholder="Unique reference code" style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;" />
+          <input name="engineModel" [(ngModel)]="engineForm.model" required placeholder="Aircraft model" style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;" />
+          
+          <select name="engineTaxonomy" [(ngModel)]="engineForm.taxonomieId" required style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;">
+            <option value="">Select taxonomy category...</option>
+            <option *ngFor="let tax of taxonomies" [value]="tax.id">{{ tax.nom }} ({{ tax.code }})</option>
+          </select>
+
+          <button type="submit" style="background-color: #00A8E8; color: #0A0A0A; border: none; padding: 12px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; cursor: pointer; font-family: 'Space Grotesk', sans-serif;">
+            Register Engine
+          </button>
+        </form>
+
+        <!-- Add Taxonomy Category Form -->
+        <div style="background-color: #0A0A0A; border: 1px solid rgba(240,240,240,0.06); padding: 24px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="font-size: 13px; font-weight: 500; color: #F0F0F0; letter-spacing: 0.1em; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif; margin: 0;">
+              Taxonomy Categories
+            </h3>
+            <button (click)="showCreateTaxonomy = !showCreateTaxonomy" style="background: none; border: 1px solid rgba(242,140,40,0.4); color: #F28C28; padding: 4px 10px; font-size: 10px; cursor: pointer; text-transform: uppercase;">
+              {{ showCreateTaxonomy ? 'Close' : '+ New' }}
+            </button>
+          </div>
+
+          <form *ngIf="showCreateTaxonomy" (ngSubmit)="createTaxonomy()" style="display: flex; flex-direction: column; gap: 12px; margin-top: 14px;">
+            <input name="taxCode" [(ngModel)]="taxonomyForm.code" required placeholder="Category code (e.g. ENG)" style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px; font-size: 12px;" />
+            <input name="taxNom" [(ngModel)]="taxonomyForm.nom" required placeholder="Category name (e.g. Engine Components)" style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px; font-size: 12px;" />
+            <input name="taxDesc" [(ngModel)]="taxonomyForm.description" placeholder="Description" style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px; font-size: 12px;" />
+            <button type="submit" style="background-color: #F28C28; color: #0A0A0A; border: none; padding: 10px; font-size: 11px; font-weight: 700; text-transform: uppercase; cursor: pointer;">
+              Add Category
+            </button>
+          </form>
+
+          <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto;">
+            <div *ngFor="let tax of taxonomies" style="border-bottom: 1px solid rgba(240,240,240,0.04); padding-bottom: 6px; font-size: 12px; display: flex; justify-content: space-between;">
+              <span style="color: #F0F0F0; font-weight: 500;">{{ tax.nom }}</span>
+              <span style="color: #00A8E8; font-family: monospace;">{{ tax.code }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Engine Directory Catalog -->
+      <div style="background-color: #0A0A0A; border: 1px solid rgba(240,240,240,0.06); padding: 24px;">
+        <h3 style="font-size: 14px; color: #F0F0F0; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; font-family: 'Space Grotesk', sans-serif;">
+          Registered Engines Catalog
+        </h3>
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; color: #F0F0F0;">
+            <thead>
+              <tr style="border-bottom: 1px solid rgba(240,240,240,0.08); color: #8A8A93; font-family: 'Space Grotesk', sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">
+                <th style="padding: 12px 8px;">Name</th>
+                <th style="padding: 12px 8px;">Reference</th>
+                <th style="padding: 12px 8px;">Model</th>
+                <th style="padding: 12px 8px;">Taxonomy</th>
+                <th style="padding: 12px 8px;">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngIf="equipements.length === 0">
+                <td colspan="5" style="padding: 16px 8px; color: #8A8A93; text-align: center;">No engines registered in the catalog yet.</td>
+              </tr>
+              <tr *ngFor="let eq of equipements" style="border-bottom: 1px solid rgba(240,240,240,0.04);">
+                <td style="padding: 12px 8px; font-weight: 500; color: #F0F0F0;">{{ eq.nom }}</td>
+                <td style="padding: 12px 8px; font-family: monospace; color: #8A8A93;">{{ eq.reference }}</td>
+                <td style="padding: 12px 8px; color: #F0F0F0;">{{ eq.model }}</td>
+                <td style="padding: 12px 8px; color: #00A8E8; font-size: 12px;">{{ eq.taxonomie?.nom }} ({{ eq.taxonomie?.code }})</td>
+                <td style="padding: 12px 8px;">
+                  <span style="color: #00A8E8; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">
+                    {{ eq.status || 'En service' }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
