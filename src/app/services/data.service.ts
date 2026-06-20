@@ -40,6 +40,14 @@ export class DataService {
     return this.http.put(`${this.equipmentApi}/taches/${taskId}/maintenance/${maintenanceId}`, {});
   }
 
+  assignTaskToTeam(taskId: string, teamId: string): Observable<any> {
+    return this.http.put(`${this.equipmentApi}/taches/${taskId}/assign-team/${teamId}`, {});
+  }
+
+  unassignTaskFromTeam(taskId: string): Observable<any> {
+    return this.http.put(`${this.equipmentApi}/taches/${taskId}/unassign-team`, {});
+  }
+
   // Equipement Endpoints
   getEquipements(): Observable<any[]> {
     return this.http.get<any[]>(`${this.equipmentApi}/equipements`);

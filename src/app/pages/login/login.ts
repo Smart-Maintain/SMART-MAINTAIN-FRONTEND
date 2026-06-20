@@ -28,10 +28,14 @@ export class Login {
   isPending = false;
 
   temporaryLoginOptions = [
-    { username: "admin", password: "admin123" },
-    { username: "manager", password: "manager123" },
-    { username: "engineer", password: "engineer123" },
-    { username: "tech1", password: "tech123" },
+    { username: "admin1@smartm.com", password: "password123" },
+    { username: "admin2@smartm.com", password: "password123" },
+    { username: "manager1@smartm.com", password: "password123" },
+    { username: "manager2@smartm.com", password: "password123" },
+    { username: "ingenieur1@smartm.com", password: "password123" },
+    { username: "ingenieur2@smartm.com", password: "password123" },
+    { username: "operateur1@smartm.com", password: "password123" },
+    { username: "operateur2@smartm.com", password: "password123" },
   ];
 
   constructor(private router: Router, private auth: AuthService, private cdr: ChangeDetectorRef) {}

@@ -103,6 +103,25 @@
       Assignments
     </button>
     <button
+      (click)="setActiveTab('tasks')"
+      [style.background-color]="activeTab === 'tasks' ? 'rgba(242,140,40,0.08)' : 'transparent'"
+      [style.border-bottom]="activeTab === 'tasks' ? '2px solid #F28C28' : '2px solid transparent'"
+      [style.color]="activeTab === 'tasks' ? '#F28C28' : '#8A8A93'"
+      style="
+        padding: 12px 24px;
+        border: none;
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      "
+    >
+      Tasks
+    </button>
+    <button
       (click)="setActiveTab('reports')"
       [style.background-color]="activeTab === 'reports' ? 'rgba(242,140,40,0.08)' : 'transparent'"
       [style.border-bottom]="activeTab === 'reports' ? '2px solid #F28C28' : '2px solid transparent'"
@@ -242,43 +261,65 @@
       </div>
     </div>
 
+  </ng-container>
+
+  <ng-container *ngIf="activeTab === 'tasks'">
     <!-- Task Management Table -->
     <div style="background-color: #0A0A0A; border: 1px solid rgba(240,240,240,0.06); padding: 24px;">
       <h3 style="font-size: 14px; font-weight: 500; color: #F0F0F0; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; font-family: 'Space Grotesk', sans-serif;">
-        All Maintenance Tasks
+        Tasks Management
       </h3>
 
-      <form (ngSubmit)="createTask()" style="display: grid; grid-template-columns: minmax(220px, 2fr) repeat(4, minmax(140px, 1fr)) auto; gap: 12px; margin-bottom: 20px; align-items: end;">
-        <input
-          type="text"
-          name="taskDescription"
-          [(ngModel)]="taskForm.description"
-          placeholder="Create a task"
-          required
-          style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px; min-width: 0;"
-        />
-        <select name="taskPriority" [(ngModel)]="taskForm.priorite" style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;">
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-          <option value="critical">Critical</option>
-        </select>
-        <select name="taskTeam" [(ngModel)]="taskForm.equipeId" style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;">
-          <option value="">No team</option>
-          <option *ngFor="let team of teams" [value]="team.id">{{ team.nom }}</option>
-        </select>
-        <select name="taskAssignment" [(ngModel)]="taskForm.maintenanceId" style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;">
-          <option value="">No assignment</option>
-          <option *ngFor="let assignment of maintenances" [value]="assignment.id">{{ assignment.description }}</option>
-        </select>
-        <select name="taskEquipment" [(ngModel)]="taskForm.taxonomieId" style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;">
-          <option value="">Any engine</option>
-          <option *ngFor="let equipment of equipements" [value]="equipment.taxonomie?.id">{{ equipment.label }}</option>
-        </select>
-        <button type="submit" style="background-color: #F28C28; color: #0A0A0A; border: none; padding: 11px 14px; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700; cursor: pointer;">
-          Create
-        </button>
-      </form>
+      <div style="background-color: #111114; border: 1px solid rgba(240,240,240,0.12); padding: 20px; margin-bottom: 24px;">
+        <h4 style="font-size: 12px; color: #F0F0F0; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.1em;">Create New Task</h4>
+        <form (ngSubmit)="createTask()" style="display: flex; flex-direction: column; gap: 16px;">
+          <div style="display: grid; grid-template-columns: minmax(220px, 2fr) repeat(3, minmax(140px, 1fr)); gap: 12px;">
+            <input
+              type="text"
+              name="taskDescription"
+              [(ngModel)]="taskForm.description"
+              placeholder="Task description"
+              required
+              style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px; min-width: 0;"
+            />
+            <select name="taskPriority" [(ngModel)]="taskForm.priorite" style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;">
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+              <option value="critical">Critical</option>
+            </select>
+            <select name="taskTeam" [(ngModel)]="taskForm.equipeId" style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;">
+              <option value="">No team (Unassigned)</option>
+              <option *ngFor="let team of teams" [value]="team.id">{{ team.nom }}</option>
+            </select>
+            <select name="taskEquipment" [(ngModel)]="taskForm.taxonomieId" style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;">
+              <option value="">Any engine</option>
+              <option *ngFor="let equipment of equipements" [value]="equipment.taxonomie?.id">{{ equipment.label }}</option>
+            </select>
+          </div>
+          
+          <div style="background-color: #0A0A0A; border: 1px dashed rgba(240,240,240,0.12); padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <h4 style="font-size: 11px; color: #8A8A93; text-transform: uppercase; letter-spacing: 0.05em; margin: 0;">Sub-Tasks (Optional)</h4>
+              <button type="button" (click)="addSubTask()" style="background: none; border: 1px solid rgba(0,168,232,0.4); color: #00A8E8; padding: 4px 10px; font-size: 10px; cursor: pointer; text-transform: uppercase;">
+                + Add Sub-Task
+              </button>
+            </div>
+            <div *ngIf="taskForm.subTasks.length === 0" style="color: #8A8A93; font-size: 11px; font-style: italic;">No sub-tasks added.</div>
+            <div *ngFor="let st of taskForm.subTasks; let i = index" style="display: flex; gap: 12px; margin-bottom: 8px;">
+              <input type="text" [(ngModel)]="st.description" name="stDesc{{i}}" placeholder="Sub-task description" style="flex: 1; background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 8px; font-size: 12px;" required />
+              <button type="button" (click)="removeSubTask(i)" style="background: none; border: 1px solid #ff6b6b; color: #ff6b6b; padding: 0 12px; font-size: 16px; cursor: pointer; line-height: 1;">&times;</button>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end;">
+            <button type="submit" style="background-color: #F28C28; color: #0A0A0A; border: none; padding: 11px 24px; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700; cursor: pointer;">
+              Create Task
+            </button>
+          </div>
+        </form>
+      </div>
+
       <div *ngIf="tasks.length === 0" style="padding: 40px; text-align: center; color: #8A8A93; font-size: 13px; font-family: 'Inter', sans-serif;">
         No tasks created yet. Use the form above to create your first task.
       </div>
@@ -313,6 +354,19 @@
                 <p style="font-size: 14px; color: #F0F0F0; font-family: 'Inter', sans-serif; line-height: 1.6; margin-bottom: 24px;">
                   {{ task.description || 'No description provided.' }}
                 </p>
+
+                <div *ngIf="task.subTasks && task.subTasks.length > 0" style="margin-bottom: 24px;">
+                  <h4 style="font-size: 11px; letter-spacing: 0.1em; color: #8A8A93; text-transform: uppercase; margin-bottom: 8px; font-family: 'Space Grotesk', sans-serif;">Sub-Tasks</h4>
+                  <ul style="list-style-type: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px;">
+                    <li *ngFor="let st of task.subTasks" style="display: flex; justify-content: space-between; background-color: #111114; padding: 10px 14px; border: 1px solid rgba(240,240,240,0.06); font-size: 13px;">
+                      <span style="color: #F0F0F0;">{{ st.description }}</span>
+                      <div style="display: flex; gap: 12px; align-items: center;">
+                        <span style="color: #8A8A93; font-size: 11px;">{{ st.assignedMemberName ? 'Assigned: ' + st.assignedMemberName : 'Unassigned' }}</span>
+                        <span [style.color]="st.status === 'DONE' ? '#00A8E8' : '#F28C28'" style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em;">{{ st.status }}</span>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                   <div>
@@ -349,7 +403,7 @@
                     <button *ngIf="task.status !== 'completed'" (click)="completeTask(task.id)" style="background-color: #00A8E8; color: #0A0A0A; border: none; padding: 6px 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; cursor: pointer; font-family: 'Space Grotesk', sans-serif;">
                       Complete
                     </button>
-                    <button (click)="editTask(task)" style="background-color: transparent; color: #F28C28; border: 1px solid rgba(242,140,40,0.4); padding: 6px 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; cursor: pointer; font-family: 'Space Grotesk', sans-serif;">
+                    <button (click)="openEditTask(task)" style="background-color: transparent; color: #F28C28; border: 1px solid rgba(242,140,40,0.4); padding: 6px 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; cursor: pointer; font-family: 'Space Grotesk', sans-serif;">
                       Edit
                     </button>
                     <button (click)="deleteTask(task.id)" style="background-color: transparent; color: #ff6b6b; border: 1px solid rgba(255,107,107,0.4); padding: 6px 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; cursor: pointer; font-family: 'Space Grotesk', sans-serif;">
@@ -361,6 +415,59 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+    
+    <!-- Edit Task Modal -->
+    <div *ngIf="editTaskModalOpen" style="position: fixed; inset: 0; background-color: rgba(10,10,10,0.85); display: flex; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px);">
+      <div style="background-color: #0A0A0A; border: 1px solid rgba(240,240,240,0.12); padding: 32px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+          <h2 style="font-size: 18px; font-weight: 500; color: #F0F0F0; letter-spacing: 0.1em; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif;">Edit Task</h2>
+          <button (click)="closeEditTask()" style="background: none; border: none; color: #8A8A93; font-size: 24px; cursor: pointer;">&times;</button>
+        </div>
+        
+        <form (ngSubmit)="saveTask()" style="display: flex; flex-direction: column; gap: 16px;">
+          <div>
+            <label style="display: block; font-size: 11px; color: #8A8A93; text-transform: uppercase; margin-bottom: 8px;">Description</label>
+            <textarea name="editDesc" [(ngModel)]="editTaskForm.description" rows="3" required style="width: 100%; background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;"></textarea>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div>
+              <label style="display: block; font-size: 11px; color: #8A8A93; text-transform: uppercase; margin-bottom: 8px;">Priority</label>
+              <select name="editPrio" [(ngModel)]="editTaskForm.priorite" style="width: 100%; background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;">
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="critical">Critical</option>
+              </select>
+            </div>
+            <div>
+              <label style="display: block; font-size: 11px; color: #8A8A93; text-transform: uppercase; margin-bottom: 8px;">Status</label>
+              <select name="editStatus" [(ngModel)]="editTaskForm.status" style="width: 100%; background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;">
+                <option value="pending">Pending</option>
+                <option value="in_progress">In Progress</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+          </div>
+          
+          <div style="background-color: #111114; border: 1px dashed rgba(240,240,240,0.12); padding: 16px; margin-top: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <h4 style="font-size: 11px; color: #8A8A93; text-transform: uppercase; letter-spacing: 0.05em; margin: 0;">Sub-Tasks</h4>
+              <button type="button" (click)="addEditSubTask()" style="background: none; border: 1px solid rgba(0,168,232,0.4); color: #00A8E8; padding: 4px 10px; font-size: 10px; cursor: pointer; text-transform: uppercase;">+ Add Sub-Task</button>
+            </div>
+            <div *ngIf="editTaskForm.subTasks.length === 0" style="color: #8A8A93; font-size: 11px; font-style: italic;">No sub-tasks added.</div>
+            <div *ngFor="let st of editTaskForm.subTasks; let i = index" style="display: flex; gap: 12px; margin-bottom: 8px;">
+              <input type="text" [(ngModel)]="st.description" name="estDesc{{i}}" placeholder="Sub-task description" style="flex: 1; background-color: #0A0A0A; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 8px; font-size: 12px;" required />
+              <button type="button" (click)="removeEditSubTask(i)" style="background: none; border: 1px solid #ff6b6b; color: #ff6b6b; padding: 0 12px; font-size: 16px; cursor: pointer; line-height: 1;">&times;</button>
+            </div>
+          </div>
+          
+          <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px;">
+            <button type="button" (click)="closeEditTask()" style="background: none; border: 1px solid rgba(240,240,240,0.12); color: #8A8A93; padding: 12px 24px; font-size: 11px; text-transform: uppercase; cursor: pointer;">Cancel</button>
+            <button type="submit" style="background-color: #00A8E8; color: #0A0A0A; border: none; padding: 12px 24px; font-size: 11px; font-weight: 700; text-transform: uppercase; cursor: pointer;">Save Changes</button>
+          </div>
+        </form>
       </div>
     </div>
   </ng-container>
@@ -386,9 +493,27 @@
           <option value="">Leader engineer/manager</option>
           <option *ngFor="let leader of leaderCandidates" [value]="leader.id">{{ userLabel(leader) }}</option>
         </select>
-        <select multiple name="technicians" [(ngModel)]="selectedTechnicianIds" required style="min-height: 120px; background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;">
-          <option *ngFor="let technician of technicianCandidates" [value]="technician.id">{{ userLabel(technician) }}</option>
-        </select>
+        <div style="min-height: 120px; max-height: 180px; overflow-y: auto; background-color: #111114; border: 1px solid rgba(240,240,240,0.12); padding: 6px; display: flex; flex-direction: column; gap: 4px;">
+          <div *ngIf="technicianCandidates.length === 0" style="color: #8A8A93; font-size: 11px; padding: 4px;">No members available</div>
+          <div *ngFor="let technician of technicianCandidates" 
+               (click)="toggleTechnician(technician.id)"
+               [style.background-color]="selectedTechnicianIds.includes(technician.id) ? 'rgba(0,168,232,0.15)' : 'transparent'"
+               [style.color]="selectedTechnicianIds.includes(technician.id) ? '#00A8E8' : '#F0F0F0'"
+               [style.border]="selectedTechnicianIds.includes(technician.id) ? '1px solid rgba(0,168,232,0.3)' : '1px solid transparent'"
+               style="padding: 6px 10px; cursor: pointer; border-radius: 4px; font-size: 12px; transition: all 0.2s; user-select: none;">
+            {{ userLabel(technician) }}
+          </div>
+        </div>
+        
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: -6px; margin-bottom: 8px;">
+          <div *ngFor="let tech of getSelectedTechniciansList(); trackBy: trackById" 
+               (click)="removeSelectedTechnician(tech.id)"
+               style="background-color: rgba(0,168,232,0.1); border: 1px solid #00A8E8; color: #00A8E8; padding: 4px 10px; font-size: 10px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px;"
+               title="Click to remove">
+            {{ userLabel(tech) }} <span style="font-weight: bold;">×</span>
+          </div>
+        </div>
+        
         <button type="submit" style="background-color: #F28C28; color: #0A0A0A; border: none; padding: 12px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; cursor: pointer;">
           Create Team
         </button>
@@ -430,9 +555,27 @@
               <option value="">Leader engineer/manager</option>
               <option *ngFor="let leader of leaderCandidates" [value]="leader.id">{{ userLabel(leader) }}</option>
             </select>
-            <select multiple name="editTechnicians" [(ngModel)]="editTeamForm.technicianIds" required style="min-height: 120px; background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;">
-              <option *ngFor="let technician of technicianCandidates" [value]="technician.id">{{ userLabel(technician) }}</option>
-            </select>
+            <div style="min-height: 120px; max-height: 180px; overflow-y: auto; background-color: #111114; border: 1px solid rgba(240,240,240,0.12); padding: 6px; display: flex; flex-direction: column; gap: 4px;">
+              <div *ngIf="technicianCandidates.length === 0" style="color: #8A8A93; font-size: 11px; padding: 4px;">No members available</div>
+              <div *ngFor="let technician of technicianCandidates" 
+                   (click)="toggleEditTechnician(technician.id)"
+                   [style.background-color]="editTeamForm.technicianIds.includes(technician.id) ? 'rgba(0,168,232,0.15)' : 'transparent'"
+                   [style.color]="editTeamForm.technicianIds.includes(technician.id) ? '#00A8E8' : '#F0F0F0'"
+                   [style.border]="editTeamForm.technicianIds.includes(technician.id) ? '1px solid rgba(0,168,232,0.3)' : '1px solid transparent'"
+                   style="padding: 6px 10px; cursor: pointer; border-radius: 4px; font-size: 12px; transition: all 0.2s; user-select: none;">
+                {{ userLabel(technician) }}
+              </div>
+            </div>
+            
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: -6px; margin-bottom: 8px;">
+              <div *ngFor="let tech of getEditSelectedTechniciansList(); trackBy: trackById" 
+                   (click)="removeEditSelectedTechnician(tech.id)"
+                   style="background-color: rgba(0,168,232,0.1); border: 1px solid #00A8E8; color: #00A8E8; padding: 4px 10px; font-size: 10px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px;"
+                   title="Click to remove">
+                {{ userLabel(tech) }} <span style="font-weight: bold;">×</span>
+              </div>
+            </div>
+            
             <div style="display: flex; gap: 12px; justify-content: flex-end;">
               <button (click)="closeEditTeam()" style="background: none; border: 1px solid rgba(240,240,240,0.12); color: #8A8A93; padding: 10px 20px; font-size: 11px; text-transform: uppercase; cursor: pointer;">
                 Cancel
@@ -448,41 +591,74 @@
   </ng-container>
 
   <ng-container *ngIf="activeTab === 'assignments'">
-    <div style="display: grid; grid-template-columns: minmax(280px, 420px) 1fr; gap: 24px;">
-      <form (ngSubmit)="createMaintenance()" style="background-color: #0A0A0A; border: 1px solid rgba(240,240,240,0.06); padding: 24px; display: flex; flex-direction: column; gap: 14px;">
-        <h3 style="font-size: 14px; font-weight: 500; color: #F0F0F0; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; font-family: 'Space Grotesk', sans-serif;">
-          Maintenance Assignment
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+      
+      <!-- Unassigned Tasks Column -->
+      <div style="background-color: #0A0A0A; border: 1px solid rgba(240,240,240,0.06); padding: 24px; min-height: 400px;">
+        <h3 style="font-size: 14px; font-weight: 500; color: #ff6b6b; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; font-family: 'Space Grotesk', sans-serif; display: flex; justify-content: space-between; align-items: center;">
+          Unassigned Tasks
+          <span style="background-color: rgba(255,107,107,0.1); padding: 2px 8px; border-radius: 12px; font-size: 11px;">{{ unassignedTasks.length }}</span>
         </h3>
-        <textarea name="assignmentDescription" [(ngModel)]="assignmentForm.description" required rows="3" placeholder="Assignment description" style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;"></textarea>
-        <select name="assignmentType" [(ngModel)]="assignmentForm.typeMaintenance" style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;">
-          <option value="PREVENTIVE">Preventive</option>
-          <option value="CORRECTIVE">Corrective</option>
-          <option value="PREDICTIVE">Predictive</option>
-        </select>
-        <select name="assignmentEquipment" [(ngModel)]="assignmentForm.equipementId" style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;">
-          <option value="">Equipment</option>
-          <option *ngFor="let equipment of equipements" [value]="equipment.id">{{ equipment.label }}</option>
-        </select>
-        <select name="assignmentTeam" [(ngModel)]="assignmentForm.equipeId" style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;">
-          <option value="">Team</option>
-          <option *ngFor="let team of teams" [value]="team.id">{{ team.nom }}</option>
-        </select>
-        <input type="date" name="assignmentStart" [(ngModel)]="assignmentForm.dateDebut" style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;" />
-        <input type="date" name="assignmentEnd" [(ngModel)]="assignmentForm.dateFin" style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;" />
-        <button type="submit" style="background-color: #F28C28; color: #0A0A0A; border: none; padding: 12px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; cursor: pointer;">
-          Create Assignment
-        </button>
-      </form>
-
-      <div style="background-color: #0A0A0A; border: 1px solid rgba(240,240,240,0.06); padding: 24px;">
-        <h3 style="font-size: 14px; color: #F0F0F0; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 16px;">Assignments</h3>
-        <div *ngFor="let assignment of maintenances" style="border-bottom: 1px solid rgba(240,240,240,0.06); padding: 14px 0;">
-          <div style="color: #F0F0F0; font-size: 14px;">{{ assignment.description }}</div>
-          <div style="color: #8A8A93; font-size: 12px; margin-top: 4px;">
-            {{ assignment.typeMaintenance }} | {{ assignment.status }} | Team: {{ assignment.equipe?.nom || 'Unassigned' }}
+        
+        <div *ngIf="unassignedTasks.length === 0" style="color: #8A8A93; font-size: 13px; font-style: italic; text-align: center; padding: 32px 0;">
+          All tasks are currently assigned.
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div *ngFor="let task of unassignedTasks" style="background-color: #111114; border: 1px solid rgba(240,240,240,0.08); padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+            <div>
+              <div style="font-size: 13px; font-weight: 500; color: #F0F0F0; margin-bottom: 4px;">{{ task.title }}</div>
+              <div style="font-size: 11px; color: #8A8A93;">ID: #{{ task.id.substring(0,8) }} | Priority: {{ task.priority }}</div>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <select [(ngModel)]="task.tempEquipeId" [ngModelOptions]="{standalone: true}" style="flex: 1; background-color: #0A0A0A; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 8px; font-size: 12px;">
+                <option [ngValue]="undefined">Select a team...</option>
+                <option *ngFor="let team of teams" [value]="team.id">{{ team.nom }}</option>
+              </select>
+              <button (click)="assignTaskToTeam(task.id, task.tempEquipeId)" style="background-color: #00A8E8; color: #0A0A0A; border: none; padding: 8px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; cursor: pointer;">
+                Assign
+              </button>
+            </div>
           </div>
         </div>
       </div>
+
+      <!-- Assigned Tasks Column -->
+      <div style="background-color: #0A0A0A; border: 1px solid rgba(240,240,240,0.06); padding: 24px; min-height: 400px;">
+        <h3 style="font-size: 14px; font-weight: 500; color: #00A8E8; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; font-family: 'Space Grotesk', sans-serif; display: flex; justify-content: space-between; align-items: center;">
+          Assigned Tasks
+          <span style="background-color: rgba(0,168,232,0.1); padding: 2px 8px; border-radius: 12px; font-size: 11px;">{{ assignedTasks.length }}</span>
+        </h3>
+        
+        <div *ngIf="assignedTasks.length === 0" style="color: #8A8A93; font-size: 13px; font-style: italic; text-align: center; padding: 32px 0;">
+          No tasks have been assigned yet.
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div *ngFor="let task of assignedTasks" style="background-color: #111114; border: 1px solid rgba(0,168,232,0.2); border-left: 3px solid #00A8E8; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+              <div>
+                <div style="font-size: 13px; font-weight: 500; color: #F0F0F0; margin-bottom: 4px;">{{ task.title || task.description }}</div>
+                <div style="font-size: 11px; color: #8A8A93;">Team ID: {{ task.equipeId }}</div>
+              </div>
+              <button (click)="unassignTaskFromTeam(task.id)" style="background: none; border: 1px solid #ff6b6b; color: #ff6b6b; padding: 4px 8px; font-size: 10px; cursor: pointer; text-transform: uppercase;">
+                Unassign
+              </button>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <span style="font-size: 11px; color: #8A8A93; white-space: nowrap;">Reassign:</span>
+              <select [(ngModel)]="task.tempEquipeId" [ngModelOptions]="{standalone: true}" style="flex: 1; background-color: #0A0A0A; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 8px; font-size: 12px;">
+                <option [ngValue]="undefined">Select a team...</option>
+                <option *ngFor="let team of teams" [value]="team.id">{{ team.nom }}</option>
+              </select>
+              <button (click)="assignTaskToTeam(task.id, task.tempEquipeId || task.equipeId)" style="background-color: transparent; border: 1px solid #00A8E8; color: #00A8E8; padding: 8px 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; cursor: pointer;">
+                Change
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
     </div>
   </ng-container>
 

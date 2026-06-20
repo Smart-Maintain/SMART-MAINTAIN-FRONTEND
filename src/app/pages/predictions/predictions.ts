@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { DataService } from '../../services/data.service';
 import { AuthService } from '../../services/auth.service';
+import { Subscription, timer } from 'rxjs';
 
 @Component({
   selector: 'app-predictions',
@@ -12,11 +13,12 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './predictions.html',
   styleUrl: './predictions.scss'
 })
-export class Predictions implements OnInit {
+export class Predictions implements OnInit, OnDestroy {
   alerts: any[] = [];
   teams: any[] = [];
   isLoading = true;
   selectedTeamIds: Record<number | string, string> = {};
+  private pollingSubscription?: Subscription;
   
   private _filterType: 'all' | 'critical' | 'warning' | 'normal' = 'all';
   private _searchQuery = '';
@@ -44,12 +46,19 @@ export class Predictions implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.loadAlerts();
     this.loadTeams();
+    this.pollingSubscription = timer(0, 2000).subscribe(() => {
+      this.loadAlerts();
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.pollingSubscription) {
+      this.pollingSubscription.unsubscribe();
+    }
   }
 
   loadAlerts() {
-    this.isLoading = true;
     this.dataService.getAlerts().subscribe({
       next: (data) => {
         this.alerts = data.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());

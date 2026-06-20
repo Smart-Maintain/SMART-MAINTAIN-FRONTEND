@@ -98,7 +98,8 @@ export class Engineer implements OnInit {
           status: t.status || 'pending',
           equipeId: t.equipe?.id || '',
           maintenanceId: t.maintenance?.id || '',
-          taxonomieId: t.taxonomie?.id || ''
+          taxonomieId: t.taxonomie?.id || '',
+          subTasks: t.subTasks || []
         }));
         this.isLoadingData = false;
       },
@@ -166,17 +167,84 @@ export class Engineer implements OnInit {
     });
   }
 
-  editTask(task: any) {
-    const description = window.prompt('Task description', task.title);
-    if (!description) return;
-    this.dataService.updateTask(task.id, {
-      description,
-      priorite: task.priority,
-      status: task.status,
-      equipeId: task.equipeId || null,
-      maintenanceId: task.maintenanceId || null,
-      taxonomieId: task.taxonomieId || null
-    }).subscribe(() => this.loadData());
+  editTaskModalOpen = false;
+  editingTask: any = null;
+  editTaskForm: any = {
+    description: '',
+    priorite: 'medium',
+    status: 'pending',
+    equipeId: '',
+    maintenanceId: '',
+    taxonomieId: '',
+    subTasks: [] as any[]
+  };
+
+  getTeamMembers(equipeId: string) {
+    if (!equipeId) return [];
+    const team = this.teams.find(t => t.id === equipeId);
+    if (!team || !team.technicianIds) return [];
+    const members = [];
+    for (let i = 0; i < team.technicianIds.length; i++) {
+      members.push({
+        id: team.technicianIds[i],
+        name: team.technicianNames[i]
+      });
+    }
+    return members;
+  }
+
+  openEditTask(task: any) {
+    this.editTaskModalOpen = true;
+    this.editingTask = task;
+    this.editTaskForm = {
+      description: task.description || task.title,
+      priorite: task.priority || 'medium',
+      status: task.status || 'pending',
+      equipeId: task.equipeId || '',
+      maintenanceId: task.maintenanceId || '',
+      taxonomieId: task.taxonomieId || '',
+      subTasks: (task.subTasks || []).map((st: any) => ({ ...st }))
+    };
+  }
+
+  closeEditTask() {
+    this.editTaskModalOpen = false;
+    this.editingTask = null;
+  }
+
+  addEditSubTask() {
+    this.editTaskForm.subTasks.push({ description: '', status: 'TODO', assignedMemberId: null, assignedMemberName: null });
+  }
+
+  removeEditSubTask(index: number) {
+    this.editTaskForm.subTasks.splice(index, 1);
+  }
+
+  updateSubTaskAssignment(st: any, memberId: string) {
+    st.assignedMemberId = memberId || null;
+    if (memberId) {
+      const members = this.getTeamMembers(this.editTaskForm.equipeId);
+      const member = members.find(m => m.id === memberId);
+      st.assignedMemberName = member ? member.name : null;
+    } else {
+      st.assignedMemberName = null;
+    }
+  }
+
+  saveTask() {
+    if (!this.editingTask) return;
+    this.dataService.updateTask(this.editingTask.id, {
+      description: this.editTaskForm.description,
+      priorite: this.editTaskForm.priorite,
+      status: this.editTaskForm.status,
+      equipeId: this.editTaskForm.equipeId || null,
+      maintenanceId: this.editTaskForm.maintenanceId || null,
+      taxonomieId: this.editTaskForm.taxonomieId || null,
+      subTasks: this.editTaskForm.subTasks
+    }).subscribe(() => {
+      this.closeEditTask();
+      this.loadData();
+    });
   }
 
   deleteTask(id: string) {

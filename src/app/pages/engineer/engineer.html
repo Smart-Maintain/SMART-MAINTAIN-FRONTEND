@@ -251,57 +251,131 @@
         <div *ngIf="expandedTaskId === task.id" style="padding: 20px; border-top: 1px solid rgba(240,240,240,0.04); background-color: #0A0A0A;">
           <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px;">
             <div>
-              <h4 style="font-size: 11px; letter-spacing: 0.1em; color: #8A8A93; text-transform: uppercase; margin-bottom: 8px; font-family: 'Space Grotesk', sans-serif;">Description</h4>
-              <p style="font-size: 14px; color: #F0F0F0; font-family: 'Inter', sans-serif; line-height: 1.6; margin-bottom: 24px;">
-                {{ task.description || 'No description provided.' }}
-              </p>
-
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                <div>
-                  <h4 style="font-size: 11px; letter-spacing: 0.1em; color: #8A8A93; text-transform: uppercase; margin-bottom: 8px; font-family: 'Space Grotesk', sans-serif;">Equipment</h4>
-                  <p style="font-size: 13px; color: #F0F0F0; font-family: 'Inter', sans-serif; margin-bottom: 4px;">{{ task.engineName }}</p>
-                  <p style="font-size: 12px; color: #8A8A93; font-family: 'Inter', sans-serif;">Category: {{ task.category }}</p>
-                </div>
-                <div>
-                  <h4 style="font-size: 11px; letter-spacing: 0.1em; color: #8A8A93; text-transform: uppercase; margin-bottom: 8px; font-family: 'Space Grotesk', sans-serif;">Assignment Info</h4>
-                  <p style="font-size: 12px; color: #F0F0F0; font-family: 'Inter', sans-serif;">Team ID: {{ task.equipeId || 'Unassigned' }}</p>
-                  <p style="font-size: 12px; color: #8A8A93; font-family: 'Inter', sans-serif;">Maint ID: {{ task.maintenanceId || 'None' }}</p>
-                </div>
-              </div>
-            </div>
-            
-            <div style="display: flex; flex-direction: column; gap: 24px;">
               <div>
-                <h4 style="font-size: 11px; letter-spacing: 0.1em; color: #8A8A93; text-transform: uppercase; margin-bottom: 8px; font-family: 'Space Grotesk', sans-serif;">Technician Note</h4>
-                <div style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 12px; font-size: 13px; min-height: 40px;">
-                  {{ task.technicianNote || 'No notes added by technician.' }}
+                <h4 style="font-size: 11px; letter-spacing: 0.1em; color: #8A8A93; text-transform: uppercase; margin-bottom: 8px; font-family: 'Space Grotesk', sans-serif;">Description</h4>
+                <p style="font-size: 14px; color: #F0F0F0; font-family: 'Inter', sans-serif; line-height: 1.6; margin-bottom: 24px;">
+                  {{ task.description || 'No description provided.' }}
+                </p>
+
+                <div *ngIf="task.subTasks && task.subTasks.length > 0" style="margin-bottom: 24px;">
+                  <h4 style="font-size: 11px; letter-spacing: 0.1em; color: #8A8A93; text-transform: uppercase; margin-bottom: 8px; font-family: 'Space Grotesk', sans-serif;">Sub-Tasks</h4>
+                  <ul style="list-style-type: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px;">
+                    <li *ngFor="let st of task.subTasks" style="display: flex; justify-content: space-between; background-color: #111114; padding: 10px 14px; border: 1px solid rgba(240,240,240,0.06); font-size: 13px;">
+                      <span style="color: #F0F0F0;">{{ st.description }}</span>
+                      <div style="display: flex; gap: 12px; align-items: center;">
+                        <span style="color: #8A8A93; font-size: 11px;">{{ st.assignedMemberName ? 'Assigned: ' + st.assignedMemberName : 'Unassigned' }}</span>
+                        <span [style.color]="st.status === 'DONE' ? '#00A8E8' : '#F28C28'" style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em;">{{ st.status }}</span>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                  <div>
+                    <h4 style="font-size: 11px; letter-spacing: 0.1em; color: #8A8A93; text-transform: uppercase; margin-bottom: 8px; font-family: 'Space Grotesk', sans-serif;">Equipment</h4>
+                    <p style="font-size: 13px; color: #F0F0F0; font-family: 'Inter', sans-serif; margin-bottom: 4px;">{{ task.engineName }}</p>
+                    <p style="font-size: 12px; color: #8A8A93; font-family: 'Inter', sans-serif;">Category: {{ task.category }}</p>
+                  </div>
+                  <div>
+                    <h4 style="font-size: 11px; letter-spacing: 0.1em; color: #8A8A93; text-transform: uppercase; margin-bottom: 8px; font-family: 'Space Grotesk', sans-serif;">Assignment Info</h4>
+                    <p style="font-size: 12px; color: #F0F0F0; font-family: 'Inter', sans-serif;">Team ID: {{ task.equipeId || 'Unassigned' }}</p>
+                    <p style="font-size: 12px; color: #8A8A93; font-family: 'Inter', sans-serif;">Maint ID: {{ task.maintenanceId || 'None' }}</p>
+                  </div>
                 </div>
               </div>
+              
+              <div style="display: flex; flex-direction: column; gap: 24px;">
+                <div>
+                  <h4 style="font-size: 11px; letter-spacing: 0.1em; color: #8A8A93; text-transform: uppercase; margin-bottom: 8px; font-family: 'Space Grotesk', sans-serif;">Technician Note</h4>
+                  <div style="background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 12px; font-size: 13px; min-height: 40px;">
+                    {{ task.technicianNote || 'No notes added by technician.' }}
+                  </div>
+                </div>
 
-              <div>
-                <h4 style="font-size: 11px; letter-spacing: 0.1em; color: #8A8A93; text-transform: uppercase; margin-bottom: 8px; font-family: 'Space Grotesk', sans-serif;">Rapport</h4>
-                <a [routerLink]="['/' + auth.user()?.role + '/rapport', task.id]" style="display: inline-block; background-color: #F28C28; color: #0A0A0A; padding: 10px 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; text-decoration: none; font-family: 'Space Grotesk', sans-serif; text-align: center; width: 100%;">
-                  Open Full Rapport
-                </a>
-              </div>
+                <div>
+                  <h4 style="font-size: 11px; letter-spacing: 0.1em; color: #8A8A93; text-transform: uppercase; margin-bottom: 8px; font-family: 'Space Grotesk', sans-serif;">Rapport</h4>
+                  <a [routerLink]="['/' + auth.user()?.role + '/rapport', task.id]" style="display: inline-block; background-color: #F28C28; color: #0A0A0A; padding: 10px 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; text-decoration: none; font-family: 'Space Grotesk', sans-serif; text-align: center; width: 100%;">
+                    Open Full Rapport
+                  </a>
+                </div>
 
-              <div style="border-top: 1px solid rgba(240,240,240,0.08); padding-top: 16px; display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-size: 11px; letter-spacing: 0.1em; color: #8A8A93; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif;">Management Actions</span>
-                <div style="display: flex; gap: 8px;">
-                  <button *ngIf="task.status === 'pending'" (click)="updateTaskStatus(task.id, 'in_progress')" style="background-color: #00A8E8; color: #0A0A0A; border: none; padding: 6px 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; cursor: pointer; font-family: 'Space Grotesk', sans-serif;">
-                    Start
-                  </button>
-                  <button (click)="editTask(task)" style="background-color: transparent; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.2); padding: 6px 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; cursor: pointer; font-family: 'Space Grotesk', sans-serif;">
-                    Edit
-                  </button>
-                  <button (click)="deleteTask(task.id)" style="background-color: transparent; color: #ff6b6b; border: 1px solid rgba(255,107,107,0.4); padding: 6px 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; cursor: pointer; font-family: 'Space Grotesk', sans-serif;">
-                    Delete
-                  </button>
+                <div style="border-top: 1px solid rgba(240,240,240,0.08); padding-top: 16px; display: flex; justify-content: space-between; align-items: center;">
+                  <span style="font-size: 11px; letter-spacing: 0.1em; color: #8A8A93; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif;">Management Actions</span>
+                  <div style="display: flex; gap: 8px;">
+                    <button *ngIf="task.status === 'pending'" (click)="updateTaskStatus(task.id, 'in_progress')" style="background-color: #00A8E8; color: #0A0A0A; border: none; padding: 6px 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; cursor: pointer; font-family: 'Space Grotesk', sans-serif;">
+                      Start
+                    </button>
+                    <button (click)="openEditTask(task)" style="background-color: transparent; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.2); padding: 6px 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; cursor: pointer; font-family: 'Space Grotesk', sans-serif;">
+                      Edit
+                    </button>
+                    <button (click)="deleteTask(task.id)" style="background-color: transparent; color: #ff6b6b; border: 1px solid rgba(255,107,107,0.4); padding: 6px 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; cursor: pointer; font-family: 'Space Grotesk', sans-serif;">
+                      Delete
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
+    </div>
+    
+    <!-- Edit Task Modal -->
+    <div *ngIf="editTaskModalOpen" style="position: fixed; inset: 0; background-color: rgba(10,10,10,0.85); display: flex; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px);">
+      <div style="background-color: #0A0A0A; border: 1px solid rgba(240,240,240,0.12); padding: 32px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+          <h2 style="font-size: 18px; font-weight: 500; color: #F0F0F0; letter-spacing: 0.1em; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif;">Edit Task</h2>
+          <button (click)="closeEditTask()" style="background: none; border: none; color: #8A8A93; font-size: 24px; cursor: pointer;">&times;</button>
+        </div>
+        
+        <form (ngSubmit)="saveTask()" style="display: flex; flex-direction: column; gap: 16px;">
+          <div>
+            <label style="display: block; font-size: 11px; color: #8A8A93; text-transform: uppercase; margin-bottom: 8px;">Description</label>
+            <textarea name="editDesc" [(ngModel)]="editTaskForm.description" rows="3" required style="width: 100%; background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;"></textarea>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div>
+              <label style="display: block; font-size: 11px; color: #8A8A93; text-transform: uppercase; margin-bottom: 8px;">Priority</label>
+              <select name="editPrio" [(ngModel)]="editTaskForm.priorite" style="width: 100%; background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;">
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="critical">Critical</option>
+              </select>
+            </div>
+            <div>
+              <label style="display: block; font-size: 11px; color: #8A8A93; text-transform: uppercase; margin-bottom: 8px;">Status</label>
+              <select name="editStatus" [(ngModel)]="editTaskForm.status" style="width: 100%; background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 10px;">
+                <option value="pending">Pending</option>
+                <option value="in_progress">In Progress</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+          </div>
+          
+          <div style="background-color: #111114; border: 1px dashed rgba(240,240,240,0.12); padding: 16px; margin-top: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <h4 style="font-size: 11px; color: #8A8A93; text-transform: uppercase; letter-spacing: 0.05em; margin: 0;">Sub-Tasks</h4>
+              <button type="button" (click)="addEditSubTask()" style="background: none; border: 1px solid rgba(0,168,232,0.4); color: #00A8E8; padding: 4px 10px; font-size: 10px; cursor: pointer; text-transform: uppercase;">+ Add Sub-Task</button>
+            </div>
+            <div *ngIf="editTaskForm.subTasks.length === 0" style="color: #8A8A93; font-size: 11px; font-style: italic;">No sub-tasks added.</div>
+            <div *ngFor="let st of editTaskForm.subTasks; let i = index" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid rgba(240,240,240,0.06);">
+              <input type="text" [(ngModel)]="st.description" name="estDesc{{i}}" placeholder="Sub-task description" style="flex: 1; min-width: 200px; background-color: #0A0A0A; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 8px; font-size: 12px;" required />
+              
+              <select [ngModel]="st.assignedMemberId" (ngModelChange)="updateSubTaskAssignment(st, $event)" name="estAssign{{i}}" style="background-color: #0A0A0A; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 8px; font-size: 12px;">
+                <option [ngValue]="null">Unassigned</option>
+                <option *ngFor="let member of getTeamMembers(editTaskForm.equipeId)" [ngValue]="member.id">{{ member.name }}</option>
+              </select>
+
+              <button type="button" (click)="removeEditSubTask(i)" style="background: none; border: 1px solid #ff6b6b; color: #ff6b6b; padding: 0 12px; font-size: 16px; cursor: pointer; line-height: 1;">&times;</button>
+            </div>
+          </div>
+          
+          <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px;">
+            <button type="button" (click)="closeEditTask()" style="background: none; border: 1px solid rgba(240,240,240,0.12); color: #8A8A93; padding: 12px 24px; font-size: 11px; text-transform: uppercase; cursor: pointer;">Cancel</button>
+            <button type="submit" style="background-color: #00A8E8; color: #0A0A0A; border: none; padding: 12px 24px; font-size: 11px; font-weight: 700; text-transform: uppercase; cursor: pointer;">Save Changes</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

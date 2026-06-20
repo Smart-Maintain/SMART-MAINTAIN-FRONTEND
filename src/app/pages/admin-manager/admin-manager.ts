@@ -13,7 +13,7 @@ import { DataService } from '../../services/data.service';
   styleUrl: './admin-manager.scss'
 })
 export class AdminManager implements OnInit {
-  activeTab: 'overview' | 'teams' | 'assignments' | 'reports' | 'team' | 'costs' | 'accounts' | 'feedbacks' | 'engines' = 'overview';
+  activeTab: 'overview' | 'teams' | 'assignments' | 'reports' | 'team' | 'costs' | 'accounts' | 'feedbacks' | 'engines' | 'tasks' = 'overview';
 
   performanceData = [
     { metric: 'Availability', value: 99.7 },
@@ -60,6 +60,10 @@ export class AdminManager implements OnInit {
   editingUser: any = null;
   createUserModalOpen = false;
 
+  pendingUsersList: any[] = [];
+  leaderCandidatesList: any[] = [];
+  technicianCandidatesList: any[] = [];
+
   expandedTaskId: string | null = null;
 
   specialties = [
@@ -74,6 +78,42 @@ export class AdminManager implements OnInit {
   
   toggleTask(id: string) {
     this.expandedTaskId = this.expandedTaskId === id ? null : id;
+  }
+
+  getSelectedTechniciansList() {
+    return this.technicianCandidatesList.filter(t => this.selectedTechnicianIds.includes(t.id));
+  }
+
+  getEditSelectedTechniciansList() {
+    return this.technicianCandidatesList.filter(t => this.editTeamForm.technicianIds.includes(t.id));
+  }
+
+  removeSelectedTechnician(id: string) {
+    this.selectedTechnicianIds = this.selectedTechnicianIds.filter(tid => tid !== id);
+  }
+
+  removeEditSelectedTechnician(id: string) {
+    this.editTeamForm.technicianIds = this.editTeamForm.technicianIds.filter(tid => tid !== id);
+  }
+
+  toggleTechnician(id: string) {
+    if (this.selectedTechnicianIds.includes(id)) {
+      this.selectedTechnicianIds = this.selectedTechnicianIds.filter(tid => tid !== id);
+    } else {
+      this.selectedTechnicianIds.push(id);
+    }
+  }
+
+  toggleEditTechnician(id: string) {
+    if (this.editTeamForm.technicianIds.includes(id)) {
+      this.editTeamForm.technicianIds = this.editTeamForm.technicianIds.filter(tid => tid !== id);
+    } else {
+      this.editTeamForm.technicianIds.push(id);
+    }
+  }
+
+  trackById(index: number, item: any) {
+    return item.id;
   }
 
   teamForm = {
@@ -106,6 +146,7 @@ export class AdminManager implements OnInit {
     equipeId: '',
     maintenanceId: '',
     taxonomieId: '',
+    subTasks: [] as any[]
   };
 
   healthReadings = [
@@ -156,7 +197,8 @@ export class AdminManager implements OnInit {
           taxonomieId: t.taxonomie?.id || '',
           description: t.description,
           technicianNote: t.note,
-          category: t.taxonomie?.code || 'General'
+          category: t.taxonomie?.code || 'General',
+          subTasks: t.subTasks || []
         }));
         this.isLoadingTasks = false;
         this.calculateTeamPerformance();
@@ -184,17 +226,22 @@ export class AdminManager implements OnInit {
       this.reports = reports.filter(report => report.type === 'ASSIGNMENT' && report.status === 'SUBMITTED');
     });
     this.dataService.getUsersByRole('INGENIEUR').subscribe({
-      next: users => this.engineers = users,
-      error: () => this.engineers = []
+      next: users => { this.engineers = users; this.updateCandidates(); },
+      error: () => { this.engineers = []; this.updateCandidates(); }
     });
     this.dataService.getUsersByRole('OPERATEUR').subscribe({
-      next: users => this.technicians = users,
-      error: () => this.technicians = []
+      next: users => { this.technicians = users; this.updateCandidates(); },
+      error: () => { this.technicians = []; this.updateCandidates(); }
     });
     this.dataService.getUsersByRole('MANAGER' as any).subscribe({
-      next: users => this.managers = users,
-      error: () => this.managers = []
+      next: users => { this.managers = users; this.updateCandidates(); },
+      error: () => { this.managers = []; this.updateCandidates(); }
     });
+  }
+
+  updateCandidates() {
+    this.leaderCandidatesList = [...this.engineers, ...this.managers];
+    this.technicianCandidatesList = [...this.engineers, ...this.technicians];
   }
 
   loadTaxonomies() {
@@ -237,11 +284,11 @@ export class AdminManager implements OnInit {
   }
 
   get leaderCandidates() {
-    return [...this.engineers, ...this.managers];
+    return this.leaderCandidatesList;
   }
 
   get technicianCandidates() {
-    return [...this.technicians, ...this.managers];
+    return this.technicianCandidatesList;
   }
 
   calculateTeamPerformance() {
@@ -265,7 +312,7 @@ export class AdminManager implements OnInit {
     });
   }
 
-  setActiveTab(tab: 'overview' | 'teams' | 'assignments' | 'reports' | 'team' | 'costs' | 'accounts' | 'feedbacks' | 'engines') {
+  setActiveTab(tab: 'overview' | 'teams' | 'assignments' | 'reports' | 'team' | 'costs' | 'accounts' | 'feedbacks' | 'engines' | 'tasks') {
     this.activeTab = tab;
   }
 
@@ -378,6 +425,14 @@ export class AdminManager implements OnInit {
     });
   }
 
+  addSubTask() {
+    this.taskForm.subTasks.push({ description: '', status: 'TODO', assignedMemberId: null, assignedMemberName: null });
+  }
+
+  removeSubTask(index: number) {
+    this.taskForm.subTasks.splice(index, 1);
+  }
+
   createTask() {
     const payload = {
       description: this.taskForm.description,
@@ -386,25 +441,100 @@ export class AdminManager implements OnInit {
       equipeId: this.taskForm.equipeId || null,
       maintenanceId: this.taskForm.maintenanceId || null,
       taxonomieId: this.taskForm.taxonomieId ? Number(this.taskForm.taxonomieId) : null,
+      subTasks: this.taskForm.subTasks
     };
 
     this.dataService.createTask(payload).subscribe(() => {
       this.taskForm.description = '';
+      this.taskForm.subTasks = [];
       this.loadTasks();
     });
   }
 
-  editTask(task: any) {
-    const description = window.prompt('Task description', task.title);
-    if (!description) return;
-    this.dataService.updateTask(task.id, {
-      description,
-      priorite: task.priority,
-      status: task.status,
-      equipeId: task.equipeId || null,
-      maintenanceId: task.maintenanceId || null,
-      taxonomieId: task.taxonomieId || null,
-    }).subscribe(() => this.loadTasks());
+  get unassignedTasks() {
+    return this.tasks.filter(t => !t.equipeId);
+  }
+
+  get assignedTasks() {
+    return this.tasks.filter(t => !!t.equipeId);
+  }
+
+  assignTaskToTeam(taskId: string, teamId: string) {
+    console.log('assignTaskToTeam called with:', { taskId, teamId });
+    if (!teamId) {
+      console.warn('assignTaskToTeam aborted: no teamId provided');
+      return;
+    }
+    this.dataService.assignTaskToTeam(taskId, teamId).subscribe({
+      next: () => {
+        console.log('Task assigned successfully');
+        this.loadTasks();
+      },
+      error: (err) => console.error('Error assigning task:', err)
+    });
+  }
+
+  unassignTaskFromTeam(taskId: string) {
+    console.log('unassignTaskFromTeam called with:', taskId);
+    this.dataService.unassignTaskFromTeam(taskId).subscribe({
+      next: () => this.loadTasks(),
+      error: (err) => console.error('Error unassigning task:', err)
+    });
+  }
+
+  editTaskModalOpen = false;
+  editingTask: any = null;
+  editTaskForm: any = {
+    description: '',
+    priorite: 'medium',
+    status: 'pending',
+    equipeId: '',
+    maintenanceId: '',
+    taxonomieId: '',
+    subTasks: [] as any[]
+  };
+
+  openEditTask(task: any) {
+    this.editTaskModalOpen = true;
+    this.editingTask = task;
+    this.editTaskForm = {
+      description: task.description || task.title,
+      priorite: task.priority || 'medium',
+      status: task.status || 'pending',
+      equipeId: task.equipeId || '',
+      maintenanceId: task.maintenanceId || '',
+      taxonomieId: task.taxonomieId || '',
+      subTasks: (task.subTasks || []).map((st: any) => ({ ...st }))
+    };
+  }
+
+  closeEditTask() {
+    this.editTaskModalOpen = false;
+    this.editingTask = null;
+  }
+
+  addEditSubTask() {
+    this.editTaskForm.subTasks.push({ description: '', status: 'TODO', assignedMemberId: null, assignedMemberName: null });
+  }
+
+  removeEditSubTask(index: number) {
+    this.editTaskForm.subTasks.splice(index, 1);
+  }
+
+  saveTask() {
+    if (!this.editingTask) return;
+    this.dataService.updateTask(this.editingTask.id, {
+      description: this.editTaskForm.description,
+      priorite: this.editTaskForm.priorite,
+      status: this.editTaskForm.status,
+      equipeId: this.editTaskForm.equipeId || null,
+      maintenanceId: this.editTaskForm.maintenanceId || null,
+      taxonomieId: this.editTaskForm.taxonomieId || null,
+      subTasks: this.editTaskForm.subTasks
+    }).subscribe(() => {
+      this.closeEditTask();
+      this.loadTasks();
+    });
   }
 
   deleteTask(id: string) {
@@ -442,13 +572,14 @@ export class AdminManager implements OnInit {
     this.dataService.getAllUsers().subscribe({
       next: (users) => {
         this.users = users;
+        this.pendingUsersList = this.users.filter(u => u.accountStatus === 'PENDING_APPROVAL');
       },
       error: (err) => console.error('Error loading users', err)
     });
   }
 
   get pendingUsers() {
-    return this.users.filter(u => u.accountStatus === 'PENDING_APPROVAL');
+    return this.pendingUsersList;
   }
 
   loadFeedbacks() {

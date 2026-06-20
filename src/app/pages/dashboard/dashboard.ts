@@ -123,16 +123,24 @@ export class Dashboard implements OnInit {
     });
   }
 
+  private navCache: any[] | null = null;
+  private lastRole: string | null = null;
+
   get filteredNav() {
     const role = this.auth.user()?.role || '';
+    if (this.navCache && this.lastRole === role) {
+      return this.navCache;
+    }
+    
+    this.lastRole = role;
     if (role === 'admin') {
-      return [
+      this.navCache = [
         { path: '/admin/dashboard', label: 'Admin Control', icon: '◆' },
         { path: '/admin/predictions', label: 'Predictions', icon: '🔔' },
         { path: '/admin/chat', label: 'AI Assistant', icon: '✦' }
       ];
     } else if (role === 'manager') {
-      return [
+      this.navCache = [
         { path: '/manager/dashboard', label: 'Overview', icon: '■' },
         { path: '/manager/admin', label: 'Admin Control', icon: '◆' },
         { path: '/manager/predictions', label: 'Predictions', icon: '🔔' },
@@ -140,20 +148,22 @@ export class Dashboard implements OnInit {
         { path: '/manager/chat', label: 'AI Assistant', icon: '✦' }
       ];
     } else if (role === 'engineer') {
-      return [
+      this.navCache = [
         { path: '/engineer/dashboard', label: 'Overview', icon: '■' },
         { path: '/engineer/predictions', label: 'Predictions', icon: '🔔' },
         { path: '/engineer/tasks', label: 'Task Execution', icon: '●' },
         { path: '/engineer/chat', label: 'AI Assistant', icon: '✦' }
       ];
     } else if (role === 'technician') {
-      return [
+      this.navCache = [
         { path: '/technician/predictions', label: 'Predictions', icon: '🔔' },
         { path: '/technician/tasks', label: 'Task Execution', icon: '●' },
         { path: '/technician/chat', label: 'AI Assistant', icon: '✦' }
       ];
+    } else {
+      this.navCache = [];
     }
-    return [];
+    return this.navCache;
   }
 
   toggleSidebar() {
