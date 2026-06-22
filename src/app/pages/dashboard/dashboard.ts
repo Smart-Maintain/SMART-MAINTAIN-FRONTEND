@@ -136,6 +136,7 @@ export class Dashboard implements OnInit {
     if (role === 'admin') {
       this.navCache = [
         { path: '/admin/dashboard', label: 'Admin Control', icon: '◆' },
+        { path: '/admin/stock', label: 'Gestion Stock', icon: '📦' },
         { path: '/admin/predictions', label: 'Predictions', icon: '🔔' },
         { path: '/admin/chat', label: 'AI Assistant', icon: '✦' }
       ];
@@ -145,6 +146,7 @@ export class Dashboard implements OnInit {
         { path: '/manager/admin', label: 'Admin Control', icon: '◆' },
         { path: '/manager/predictions', label: 'Predictions', icon: '🔔' },
         { path: '/manager/tasks', label: 'Task Execution', icon: '●' },
+        { path: '/manager/approvals', label: 'Approvals', icon: '✓' },
         { path: '/manager/chat', label: 'AI Assistant', icon: '✦' }
       ];
     } else if (role === 'engineer') {

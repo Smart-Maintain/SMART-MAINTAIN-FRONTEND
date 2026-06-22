@@ -21,6 +21,9 @@ export class Technician implements OnInit {
   notes: Record<string, string> = {};
   reportContents: Record<string, string> = {};
 
+  availablePieces: any[] = [];
+  pieceRequestData: Record<string, { pieceId: string, quantite: number }> = {};
+
   mockWeeklyProgress = [
     { day: 'Mon', completed: 2, assigned: 3 },
     { day: 'Tue', completed: 3, assigned: 4 },
@@ -43,6 +46,13 @@ export class Technician implements OnInit {
   ngOnInit() {
     console.log('Technician page initialized');
     this.loadTasks();
+    this.loadPieces();
+  }
+
+  loadPieces() {
+    this.dataService.getPieces().subscribe(res => {
+      this.availablePieces = res;
+    });
   }
 
   loadTasks() {
@@ -51,18 +61,23 @@ export class Technician implements OnInit {
       next: (tasks) => {
         console.log('Technician fetched tasks:', tasks);
         // Map backend Tache entities to frontend format if needed
-        this.allTasks = tasks.map(t => ({
-          id: t.id,
-          title: t.description || 'Unknown Task',
-          description: t.description,
-          engineName: t.taxonomie?.nom || 'Unknown Engine',
-          category: 'maintenance',
-          priority: t.priorite || 'medium',
-          status: t.status || 'pending',
-          dueDate: '2026-05-20', // Backend doesn't have dueDate yet
-          technicianNote: t.technicianNote || '',
-          reportStatus: t.rapports?.[0]?.status || ''
-        }));
+        this.allTasks = tasks.map(t => {
+          this.pieceRequestData[t.id] = this.pieceRequestData[t.id] || { pieceId: '', quantite: 1 };
+          return {
+            id: t.id,
+            title: t.description || 'Unknown Task',
+            description: t.description,
+            engineName: t.taxonomie?.nom || 'Unknown Engine',
+            category: 'maintenance',
+            priority: t.priorite || 'medium',
+            status: t.status || 'pending',
+            dueDate: '2026-05-20', // Backend doesn't have dueDate yet
+            technicianNote: t.technicianNote || '',
+            reportStatus: t.rapports?.[0]?.status || '',
+            totalCost: t.totalCost || 0,
+            pieceRequests: t.pieceRequests || []
+          };
+        });
         console.log('Technician mapped tasks:', this.allTasks.length, this.allTasks);
         this.isLoading = false;
       },
@@ -126,6 +141,27 @@ export class Technician implements OnInit {
         this.reportContents[task.id] = '';
         this.loadTasks();
       });
+    });
+  }
+
+  requestPiece(task: any) {
+    const data = this.pieceRequestData[task.id];
+    if (!data || !data.pieceId || !data.quantite || Number(data.quantite) <= 0) return;
+    
+    const payload = {
+      tacheId: task.id,
+      pieceId: data.pieceId,
+      quantite: Number(data.quantite),
+      requestedBy: this.auth.user()?.email || 'technician'
+    };
+    
+    this.dataService.createPieceRequest(payload).subscribe({
+      next: () => {
+        this.loadTasks(); 
+        data.pieceId = '';
+        data.quantite = 1;
+      },
+      error: (err) => console.error('Failed to request piece', err)
     });
   }
 

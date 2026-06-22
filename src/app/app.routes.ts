@@ -12,7 +12,8 @@ export const routes: Routes = [
       { path: 'dashboard', loadComponent: () => import('./pages/admin-manager/admin-manager').then(m => m.AdminManager) },
       { path: 'predictions', loadComponent: () => import('./pages/predictions/predictions').then(m => m.Predictions) },
       { path: 'chat', loadComponent: () => import('./pages/chat/chat').then(m => m.ChatPage) },
-      { path: 'rapport/:taskId', loadComponent: () => import('./pages/rapport/rapport').then(m => m.Rapport) }
+      { path: 'rapport/:taskId', loadComponent: () => import('./pages/rapport/rapport').then(m => m.Rapport) },
+      { path: 'stock', loadComponent: () => import('./pages/stock/stock').then(m => m.Stock) }
     ]
   },
   {
@@ -25,7 +26,8 @@ export const routes: Routes = [
       { path: 'predictions', loadComponent: () => import('./pages/predictions/predictions').then(m => m.Predictions) },
       { path: 'tasks', loadComponent: () => import('./pages/technician/technician').then(m => m.Technician) },
       { path: 'chat', loadComponent: () => import('./pages/chat/chat').then(m => m.ChatPage) },
-      { path: 'rapport/:taskId', loadComponent: () => import('./pages/rapport/rapport').then(m => m.Rapport) }
+      { path: 'rapport/:taskId', loadComponent: () => import('./pages/rapport/rapport').then(m => m.Rapport) },
+      { path: 'approvals', loadComponent: () => import('./pages/approvals/approvals').then(m => m.Approvals) }
     ]
   },
   {

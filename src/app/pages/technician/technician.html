@@ -141,6 +141,32 @@
               <h4 style="font-size: 11px; letter-spacing: 0.1em; color: #8A8A93; text-transform: uppercase; margin-bottom: 8px; font-family: 'Space Grotesk', sans-serif;">Equipment</h4>
               <p style="font-size: 13px; color: #F0F0F0; font-family: 'Inter', sans-serif; margin-bottom: 4px;">{{ task.engineName }}</p>
               <p style="font-size: 12px; color: #8A8A93; font-family: 'Inter', sans-serif;">Category: {{ task.category }}</p>
+
+              <div style="margin-top: 24px; border-top: 1px solid rgba(240,240,240,0.08); padding-top: 16px;">
+                <h4 style="font-size: 11px; letter-spacing: 0.1em; color: #8A8A93; text-transform: uppercase; margin-bottom: 12px; font-family: 'Space Grotesk', sans-serif;">Pieces Requests</h4>
+                
+                <div *ngIf="task.pieceRequests && task.pieceRequests.length > 0" style="margin-bottom: 16px;">
+                  <ul style="list-style-type: none; padding: 0; margin: 0; font-size: 13px; color: #F0F0F0; display: flex; flex-direction: column; gap: 8px;">
+                    <li *ngFor="let req of task.pieceRequests" style="display: flex; justify-content: space-between; background: #111114; padding: 8px 12px; border-radius: 4px; border: 1px solid rgba(240,240,240,0.08);">
+                      <span>{{ req.quantite }}x {{ req.piece?.nom }}</span>
+                      <span [ngStyle]="{'color': req.status === 'APPROVED' ? '#00A8E8' : (req.status === 'REJECTED' ? '#ff6b6b' : '#F28C28')}">
+                        {{ req.status }}
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div *ngIf="task.status !== 'completed'" style="display: flex; gap: 8px;">
+                  <select [(ngModel)]="pieceRequestData[task.id].pieceId" style="flex: 2; background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 8px 12px; font-size: 13px;">
+                    <option value="">Select a piece...</option>
+                    <option *ngFor="let p of availablePieces" [value]="p.id">{{ p.nom }} (In stock: {{ p.quantite }})</option>
+                  </select>
+                  <input type="number" [(ngModel)]="pieceRequestData[task.id].quantite" min="1" style="flex: 1; background-color: #111114; color: #F0F0F0; border: 1px solid rgba(240,240,240,0.12); padding: 8px 12px; font-size: 13px;" />
+                  <button (click)="requestPiece(task)" style="background-color: transparent; border: 1px solid #F28C28; color: #F28C28; padding: 0 16px; font-size: 11px; font-weight: 600; text-transform: uppercase; cursor: pointer; font-family: 'Space Grotesk', sans-serif;">
+                    Request
+                  </button>
+                </div>
+              </div>
             </div>
             
             <div style="display: flex; flex-direction: column; gap: 24px;">
@@ -177,7 +203,7 @@
                   </button>
                   <span *ngIf="task.status === 'completed'" style="font-size: 12px; color: #00A8E8; font-weight: 600; text-transform: uppercase;">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
-                    Done
+                    Done (Cost: ${{ task.totalCost }})
                   </span>
                 </div>
               </div>

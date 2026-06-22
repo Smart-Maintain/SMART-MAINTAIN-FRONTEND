@@ -191,4 +191,42 @@ export class DataService {
 
   // Analytics Endpoints (If available in identity-service admin)
   // For now, we will use mock analytics if real ones don't exist yet
+
+  // Pieces Endpoints
+  getPieces(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.equipmentApi}/pieces`);
+  }
+
+  createPiece(pieceData: any): Observable<any> {
+    return this.http.post(`${this.equipmentApi}/pieces`, pieceData);
+  }
+
+  updatePiece(id: string, pieceData: any): Observable<any> {
+    return this.http.put(`${this.equipmentApi}/pieces/${id}`, pieceData);
+  }
+
+  deletePiece(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.equipmentApi}/pieces/${id}`);
+  }
+
+  // Piece Requests Endpoints
+  getPieceRequests(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.equipmentApi}/piece-requests`);
+  }
+
+  getPendingPieceRequests(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.equipmentApi}/piece-requests/pending`);
+  }
+
+  getPieceRequestsByTache(tacheId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.equipmentApi}/piece-requests/tache/${tacheId}`);
+  }
+
+  createPieceRequest(requestData: any): Observable<any> {
+    return this.http.post(`${this.equipmentApi}/piece-requests`, requestData);
+  }
+
+  updatePieceRequestStatus(id: string, status: string): Observable<any> {
+    return this.http.patch(`${this.equipmentApi}/piece-requests/${id}/status`, { status });
+  }
 }
