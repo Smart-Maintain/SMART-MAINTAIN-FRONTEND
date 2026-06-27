@@ -142,6 +142,18 @@
               <p style="font-size: 13px; color: #F0F0F0; font-family: 'Inter', sans-serif; margin-bottom: 4px;">{{ task.engineName }}</p>
               <p style="font-size: 12px; color: #8A8A93; font-family: 'Inter', sans-serif;">Category: {{ task.category }}</p>
 
+              <div *ngIf="task.subTasks && task.subTasks.length > 0" style="margin-top: 24px; border-top: 1px solid rgba(240,240,240,0.08); padding-top: 16px;">
+                <h4 style="font-size: 11px; letter-spacing: 0.1em; color: #8A8A93; text-transform: uppercase; margin-bottom: 12px; font-family: 'Space Grotesk', sans-serif;">Sub-Tasks</h4>
+                <ul style="list-style-type: none; padding: 0; margin: 0; font-size: 13px; color: #F0F0F0; display: flex; flex-direction: column; gap: 8px;">
+                  <li *ngFor="let st of task.subTasks" style="display: flex; justify-content: space-between; background: #111114; padding: 8px 12px; border-radius: 4px; border: 1px solid rgba(240,240,240,0.08);">
+                    <span>{{ st.description }} <span *ngIf="st.assignedMemberName" style="color: #8A8A93; font-size: 11px;">(Assigned: {{ st.assignedMemberName }})</span></span>
+                    <span [ngStyle]="{'color': st.status === 'COMPLETED' ? '#00A8E8' : '#F28C28'}">
+                      {{ st.status || 'PENDING' }}
+                    </span>
+                  </li>
+                </ul>
+              </div>
+
               <div style="margin-top: 24px; border-top: 1px solid rgba(240,240,240,0.08); padding-top: 16px;">
                 <h4 style="font-size: 11px; letter-spacing: 0.1em; color: #8A8A93; text-transform: uppercase; margin-bottom: 12px; font-family: 'Space Grotesk', sans-serif;">Pieces Requests</h4>
                 

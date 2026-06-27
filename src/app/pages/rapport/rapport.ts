@@ -26,6 +26,13 @@ export class Rapport implements OnInit {
   
   isSubmitting = false;
 
+  editingReportId: string | null = null;
+  editReportData = {
+    title: '',
+    content: '',
+    attachments: [] as string[]
+  };
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -64,24 +71,121 @@ export class Rapport implements OnInit {
     // 2. Fetch Reports for this task
     this.dataService.getReports().subscribe({
       next: (reports) => {
-        this.reports = reports.filter(r => r.taskId === this.taskId);
+        this.reports = reports.filter(r => r.tache && r.tache.id === this.taskId);
       },
       error: (err) => console.error('Error loading reports', err)
     });
   }
 
   handleFileSelect(event: any) {
-    // Simulate reading file names for attachments
     const files = event.target.files;
     if (files && files.length > 0) {
       for (let i = 0; i < files.length; i++) {
-        this.newReport.attachments.push(files[i].name);
+        const file = files[i];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.newReport.attachments.push(JSON.stringify({
+            name: file.name,
+            data: e.target?.result as string
+          }));
+        };
+        reader.readAsDataURL(file);
       }
     }
   }
 
   removeAttachment(index: number) {
     this.newReport.attachments.splice(index, 1);
+  }
+
+  handleEditFileSelect(event: any) {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.editReportData.attachments.push(JSON.stringify({
+            name: file.name,
+            data: e.target?.result as string
+          }));
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  }
+
+  removeEditAttachment(index: number) {
+    this.editReportData.attachments.splice(index, 1);
+  }
+
+  getAttachmentName(attachmentStr: string) {
+    try {
+      const parsed = JSON.parse(attachmentStr);
+      return parsed.name || 'Attachment';
+    } catch {
+      return attachmentStr;
+    }
+  }
+
+  downloadAttachment(attachmentStr: string) {
+    try {
+      const parsed = JSON.parse(attachmentStr);
+      const a = document.createElement('a');
+      a.href = parsed.data;
+      a.download = parsed.name;
+      a.click();
+    } catch {
+      // For old non-JSON mock attachments, do nothing or handle differently
+      console.warn('Cannot download old mock attachment format.');
+    }
+  }
+
+  canEditReport(report: any): boolean {
+    const currentUser = this.auth.user();
+    if (!currentUser) return false;
+    if (report.authorEmail === currentUser.email) return true;
+    if (currentUser.role === 'manager') return true;
+    if (currentUser.role === 'engineer' && this.task?.equipe?.leaderEngineerName === currentUser.name) return true;
+    return false;
+  }
+
+  startEdit(report: any) {
+    this.editingReportId = report.id;
+    this.editReportData = {
+      title: report.title,
+      content: report.content,
+      attachments: report.attachments ? [...report.attachments] : []
+    };
+  }
+
+  cancelEdit() {
+    this.editingReportId = null;
+  }
+
+  saveEdit(reportId: string) {
+    if (!this.editReportData.title || !this.editReportData.content) return;
+    
+    this.isSubmitting = true;
+    const updatedData = {
+      ...this.editReportData,
+      status: 'PENDING_REVIEW'
+    };
+
+    this.dataService.updateReport(reportId, updatedData).subscribe({
+      next: (updated) => {
+        const index = this.reports.findIndex(r => r.id === reportId);
+        if (index !== -1) {
+          this.reports[index] = updated;
+        }
+        this.editingReportId = null;
+        this.isSubmitting = false;
+      },
+      error: (err) => {
+        console.error('Error updating report', err);
+        this.isSubmitting = false;
+      }
+    });
   }
 
   submitReport() {
@@ -92,7 +196,10 @@ export class Rapport implements OnInit {
       title: this.newReport.title,
       content: this.newReport.content,
       status: 'PENDING_REVIEW',
-      taskId: this.taskId,
+      type: 'PROCESS_STEP',
+      tacheId: this.taskId,
+      authorEmail: this.auth.user()?.email,
+      authorRole: this.auth.user()?.role,
       attachments: this.newReport.attachments
     };
 

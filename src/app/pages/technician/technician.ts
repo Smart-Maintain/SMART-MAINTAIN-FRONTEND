@@ -75,7 +75,8 @@ export class Technician implements OnInit {
             technicianNote: t.technicianNote || '',
             reportStatus: t.rapports?.[0]?.status || '',
             totalCost: t.totalCost || 0,
-            pieceRequests: t.pieceRequests || []
+            pieceRequests: t.pieceRequests || [],
+            subTasks: t.subTasks || []
           };
         });
         console.log('Technician mapped tasks:', this.allTasks.length, this.allTasks);

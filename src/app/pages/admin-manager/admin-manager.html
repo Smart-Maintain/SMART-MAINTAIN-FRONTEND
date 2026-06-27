@@ -392,7 +392,7 @@
 
                 <div>
                   <h4 style="font-size: 11px; letter-spacing: 0.1em; color: #8A8A93; text-transform: uppercase; margin-bottom: 8px; font-family: 'Space Grotesk', sans-serif;">Rapport</h4>
-                  <a [routerLink]="['/admin/rapport', task.id]" style="display: inline-block; background-color: #ff6b6b; color: #0A0A0A; padding: 10px 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; text-decoration: none; font-family: 'Space Grotesk', sans-serif; text-align: center; width: 100%;">
+                  <a [routerLink]="['/' + (auth.user()?.role || 'admin') + '/rapport', task.id]" style="display: inline-block; background-color: #ff6b6b; color: #0A0A0A; padding: 10px 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; text-decoration: none; font-family: 'Space Grotesk', sans-serif; text-align: center; width: 100%;">
                     Open Full Rapport
                   </a>
                 </div>
