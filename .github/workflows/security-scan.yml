@@ -2,7 +2,7 @@ name: Pipeline DevSecOps Front-End - Scans, Build, Sign & Notify
 
 on:
   push:
-    branches: [ "main", "master" ]
+    branches: [ "main", "master", "frontend" ]
 
 # ========================================================
 # 🔑 CONFIGURATION DES PERMISSIONS
