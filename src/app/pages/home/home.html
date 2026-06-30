@@ -1,0 +1,224 @@
+<div style="background-color: #0A0A0A; min-height: 100vh; color: #F0F0F0; font-family: 'Inter', sans-serif;">
+  
+  <!-- Header -->
+  <header
+    [style.background-color]="scrolled ? 'rgba(10,10,10,0.85)' : 'transparent'"
+    [style.border-bottom]="scrolled ? '1px solid rgba(240,240,240,0.06)' : '1px solid transparent'"
+    style="
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(24px, 4vw, 60px);
+      z-index: 100;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    "
+  >
+    <a href="#" style="text-decoration: none; display: flex; flex-direction: column; gap: 2px;">
+      <span style="font-size: 14px; font-weight: 700; letter-spacing: 0.14em; color: #F0F0F0; font-family: 'Space Grotesk', sans-serif;">TURBINEFORCE</span>
+      <span style="font-size: 9px; font-weight: 500; letter-spacing: 0.24em; color: #8A8A93; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif;">Predictive Maintenance</span>
+    </a>
+
+    <nav style="display: flex; align-items: center; gap: clamp(24px, 3vw, 40px);">
+      <a href="#works" style="font-size: 11px; font-weight: 500; letter-spacing: 0.14em; color: #F0F0F0; text-transform: uppercase; text-decoration: none; font-family: 'Space Grotesk', sans-serif;">Fleet</a>
+      <a routerLink="/login" style="font-size: 11px; font-weight: 500; letter-spacing: 0.14em; color: #F0F0F0; text-transform: uppercase; text-decoration: none; font-family: 'Space Grotesk', sans-serif;">Sign In</a>
+    </nav>
+  </header>
+
+  <!-- Spatial (Hero Video) -->
+  <section
+    style="
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 640px;
+      overflow: hidden;
+      background-color: #0A0A0A;
+    "
+  >
+    <video
+      src="/videos/hero-bg.mp4"
+      [muted]="true"
+      [loop]="true"
+      [autoplay]="true"
+      playsinline
+      style="
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      "
+    ></video>
+    
+    <div
+      style="
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(10,10,10,0.75) 0%, rgba(10,10,10,0.35) 40%, rgba(10,10,10,0.75) 100%);
+      "
+    ></div>
+
+    <div
+      style="
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 28px;
+        padding: 0 clamp(32px, 4.5vw, 72px);
+      "
+    >
+      <span style="font-size: 12px; font-weight: 500; letter-spacing: 0.28em; color: #F28C28; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif;">
+        Smart Engine Maintenance · Est. 2019
+      </span>
+
+      <h1 style="font-size: clamp(44px, 7vw, 108px); font-weight: 400; letter-spacing: -0.03em; line-height: 1.02; color: #F0F0F0; max-width: 920px; text-shadow: 0 2px 24px rgba(0,0,0,0.5); font-family: 'Space Grotesk', sans-serif;">
+        Where Precision<br />Meets Propulsion
+      </h1>
+
+      <p style="font-size: clamp(15px, 1.2vw, 18px); font-weight: 300; line-height: 1.65; color: rgba(240,240,240,0.78); max-width: 520px;">
+        AI-powered predictive maintenance for commercial aviation. Monitor
+        engine health in real time, predict failures before they happen, and
+        keep your fleet airborne with precision-engineered maintenance
+        intelligence.
+      </p>
+
+      <div style="display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap;">
+        <a routerLink="/login" style="font-size: 13px; font-weight: 500; letter-spacing: 0.14em; color: #0A0A0A; background-color: #F28C28; border: 1px solid #F28C28; padding: 16px 36px; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif; text-decoration: none;">
+          Go to Dashboard
+        </a>
+        <a href="#works" style="font-size: 13px; font-weight: 500; letter-spacing: 0.14em; color: #F0F0F0; background-color: transparent; border: none; padding: 16px 8px; cursor: pointer; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif; text-decoration: underline; text-underline-offset: 6px; text-decoration-color: #F28C28;">
+          View Fleet →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Philosophy -->
+  <section style="background-color: #0A0A0A; padding: 160px clamp(20px, 4vw, 60px); border-top: 1px solid rgba(240,240,240,0.06);">
+    <div style="max-width: 1400px; margin: 0 auto; display: flex; gap: 80px; flex-wrap: wrap; align-items: flex-start;">
+      <p style="flex: 1 1 700px; font-size: clamp(28px, 4vw, 60px); font-weight: 400; line-height: 1.25; letter-spacing: -0.02em; color: #F0F0F0; max-width: 1200px; font-family: 'Space Grotesk', sans-serif;">
+        We believe the safest flight is the one where every turbine blade,
+        every oil pressure reading, and every vibration signature is known
+        before the wheels leave the ground.
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 12px; padding-top: 12px;">
+        <span style="font-size: 11px; font-weight: 500; letter-spacing: 0.18em; color: #F0F0F0; padding: 10px 18px; border: 1px solid #F28C28; white-space: nowrap; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif;">
+          Predictive
+        </span>
+        <span style="font-size: 11px; font-weight: 500; letter-spacing: 0.18em; color: #F0F0F0; padding: 10px 18px; border: 1px solid #F28C28; white-space: nowrap; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif;">
+          Precision
+        </span>
+        <span style="font-size: 11px; font-weight: 500; letter-spacing: 0.18em; color: #F0F0F0; padding: 10px 18px; border: 1px solid #F28C28; white-space: nowrap; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif;">
+          Zero-Downtime
+        </span>
+      </div>
+    </div>
+
+    <div style="max-width: 1400px; margin: 80px auto 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2px; background-color: rgba(240,240,240,0.06); border: 1px solid rgba(240,240,240,0.06);">
+      <div style="background-color: #0A0A0A; padding: 40px 32px; text-align: center;">
+        <div style="font-size: clamp(36px, 4vw, 56px); font-weight: 700; color: #00A8E8; letter-spacing: -0.03em; margin-bottom: 8px; font-family: 'Space Grotesk', sans-serif;">
+          2,400+
+        </div>
+        <div style="font-size: 11px; letter-spacing: 0.18em; color: #8A8A93; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif;">
+          Engines Monitored
+        </div>
+      </div>
+      <div style="background-color: #0A0A0A; padding: 40px 32px; text-align: center;">
+        <div style="font-size: clamp(36px, 4vw, 56px); font-weight: 700; color: #00A8E8; letter-spacing: -0.03em; margin-bottom: 8px; font-family: 'Space Grotesk', sans-serif;">
+          99.7%
+        </div>
+        <div style="font-size: 11px; letter-spacing: 0.18em; color: #8A8A93; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif;">
+          Uptime Guarantee
+        </div>
+      </div>
+      <div style="background-color: #0A0A0A; padding: 40px 32px; text-align: center;">
+        <div style="font-size: clamp(36px, 4vw, 56px); font-weight: 700; color: #00A8E8; letter-spacing: -0.03em; margin-bottom: 8px; font-family: 'Space Grotesk', sans-serif;">
+          47%
+        </div>
+        <div style="font-size: 11px; letter-spacing: 0.18em; color: #8A8A93; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif;">
+          Cost Reduction
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Works (Monitored Fleet) -->
+  <section id="works" style="padding: 120px clamp(20px, 4vw, 60px); border-top: 1px solid rgba(240,240,240,0.06);">
+    <div style="max-width: 1560px; margin: 0 auto;">
+      <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 60px; border-bottom: 1px solid rgba(240,240,240,0.12); padding-bottom: 20px;">
+        <h2 style="font-size: clamp(36px, 5vw, 64px); font-weight: 400; letter-spacing: -0.03em; line-height: 1; color: #F0F0F0; font-family: 'Space Grotesk', sans-serif;">
+          Monitored Fleet
+        </h2>
+        <span style="font-size: 12px; letter-spacing: 0.18em; color: #8A8A93; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif;">
+          Active Engines
+        </span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 640px), 1fr)); gap: 24px;">
+        <div *ngFor="let engine of engines" style="border: 1px solid rgba(240,240,240,0.08); background-color: #0A0A0A; padding: 0; text-align: left;">
+          <div style="position: relative; width: 100%; padding-bottom: 56.25%; overflow: hidden; background-color: #1A1A1D;">
+            <canvas #engineCanvas style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block;"></canvas>
+          </div>
+          <div style="padding: 20px 24px; border-top: 1px solid rgba(240,240,240,0.08); display: flex; justify-content: space-between; align-items: center; gap: 16px;">
+            <div>
+              <p style="font-size: 11px; letter-spacing: 0.2em; color: #8A8A93; text-transform: uppercase; margin-bottom: 6px; font-family: 'Space Grotesk', sans-serif;">
+                {{ engine.id }} · {{ engine.client }}
+              </p>
+              <p style="font-size: 18px; font-weight: 500; color: #F0F0F0; letter-spacing: -0.01em; line-height: 1.3; font-family: 'Space Grotesk', sans-serif;">
+                {{ engine.title }}
+              </p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 16px;">
+              <span [style.color]="getHealthColor(engine.health)" style="font-size: 12px; font-weight: 700; letter-spacing: 0.04em; font-family: 'Space Grotesk', sans-serif;">
+                {{ engine.health }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="border-top: 1px solid rgba(240,240,240,0.06); padding: clamp(60px, 8vw, 120px) clamp(24px, 4vw, 60px) 40px; display: flex; flex-direction: column; justify-content: space-between; min-height: 50vh;">
+    <div style="max-width: 1560px; margin: 0 auto; width: 100%;">
+      <h2 style="font-size: clamp(36px, 6vw, 84px); font-weight: 400; letter-spacing: -0.03em; line-height: 1.05; color: #F0F0F0; max-width: 900px; margin-bottom: clamp(60px, 8vw, 120px); font-family: 'Space Grotesk', sans-serif;">
+        Engineered for<br />the next generation.
+      </h2>
+      
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 40px;">
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <span style="font-size: 20px; font-weight: 500; letter-spacing: 0.1em; color: #F0F0F0; font-family: 'Space Grotesk', sans-serif;">TURBINEFORCE</span>
+          <span style="font-size: 12px; letter-spacing: 0.12em; color: #8A8A93; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif;">Predictive Maintenance Platform</span>
+        </div>
+        <div style="display: flex; gap: 40px;">
+          <a href="#" style="font-size: 12px; letter-spacing: 0.1em; color: #8A8A93; text-transform: uppercase; text-decoration: none; font-family: 'Space Grotesk', sans-serif;">Platform</a>
+          <a href="#" style="font-size: 12px; letter-spacing: 0.1em; color: #8A8A93; text-transform: uppercase; text-decoration: none; font-family: 'Space Grotesk', sans-serif;">Careers</a>
+          <a href="#" style="font-size: 12px; letter-spacing: 0.1em; color: #8A8A93; text-transform: uppercase; text-decoration: none; font-family: 'Space Grotesk', sans-serif;">Contact</a>
+        </div>
+      </div>
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 40px; margin-top: 40px; border-top: 1px solid rgba(240,240,240,0.06); flex-wrap: wrap; gap: 20px;">
+        <span style="font-size: 11px; letter-spacing: 0.08em; color: #8A8A93; font-family: 'Inter', sans-serif;">© 2026 TurbineForce Inc. All rights reserved.</span>
+        <div style="display: flex; gap: 24px;">
+          <a href="#" style="font-size: 11px; letter-spacing: 0.08em; color: #8A8A93; text-decoration: none; font-family: 'Inter', sans-serif;">Privacy Policy</a>
+          <a href="#" style="font-size: 11px; letter-spacing: 0.08em; color: #8A8A93; text-decoration: none; font-family: 'Inter', sans-serif;">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>

@@ -1,0 +1,59 @@
+<div style="padding: 32px; font-family: 'Inter', sans-serif;">
+  <h1 style="font-size: 24px; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: 0.15em; color: #F0F0F0; margin-bottom: 24px; border-bottom: 1px solid rgba(240,240,240,0.06); padding-bottom: 16px;">
+    Gestion de Stock
+  </h1>
+
+  <div style="background-color: #111114; border: 1px solid rgba(240,240,240,0.08); padding: 24px; margin-bottom: 32px;">
+    <h2 style="font-size: 14px; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: 0.1em; color: #00A8E8; margin-bottom: 24px;">
+      {{ isEditing ? 'Edit Piece' : 'Add New Piece' }}
+    </h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+      <input type="text" [(ngModel)]="newPiece.reference" placeholder="Reference" style="background-color: #0A0A0A; border: 1px solid rgba(240,240,240,0.12); padding: 12px; color: #F0F0F0; font-size: 13px; outline: none;" />
+      <input type="text" [(ngModel)]="newPiece.nom" placeholder="Name" style="background-color: #0A0A0A; border: 1px solid rgba(240,240,240,0.12); padding: 12px; color: #F0F0F0; font-size: 13px; outline: none;" />
+      <input type="number" [(ngModel)]="newPiece.quantite" placeholder="Quantity" style="background-color: #0A0A0A; border: 1px solid rgba(240,240,240,0.12); padding: 12px; color: #F0F0F0; font-size: 13px; outline: none;" />
+      <input type="number" [(ngModel)]="newPiece.prix" placeholder="Price" style="background-color: #0A0A0A; border: 1px solid rgba(240,240,240,0.12); padding: 12px; color: #F0F0F0; font-size: 13px; outline: none;" />
+      <input type="number" [(ngModel)]="newPiece.seuilMin" placeholder="Min Threshold" style="background-color: #0A0A0A; border: 1px solid rgba(240,240,240,0.12); padding: 12px; color: #F0F0F0; font-size: 13px; outline: none;" />
+    </div>
+    <div style="margin-top: 24px; display: flex; gap: 12px;">
+      <button (click)="savePiece()" style="background-color: #00A8E8; color: #0A0A0A; border: none; padding: 10px 24px; font-size: 11px; font-weight: 700; text-transform: uppercase; cursor: pointer; font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.1em;">
+        {{ isEditing ? 'Update' : 'Add' }}
+      </button>
+      <button *ngIf="isEditing" (click)="resetForm()" style="background: transparent; color: #8A8A93; border: 1px solid rgba(240,240,240,0.12); padding: 10px 24px; font-size: 11px; text-transform: uppercase; cursor: pointer; font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.1em;">
+        Cancel
+      </button>
+    </div>
+  </div>
+
+  <div style="background-color: #111114; border: 1px solid rgba(240,240,240,0.08); overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+      <thead>
+        <tr style="border-bottom: 1px solid rgba(240,240,240,0.06); background-color: rgba(240,240,240,0.02);">
+          <th style="padding: 16px; font-size: 10px; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: 0.1em; color: #8A8A93;">Ref</th>
+          <th style="padding: 16px; font-size: 10px; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: 0.1em; color: #8A8A93;">Name</th>
+          <th style="padding: 16px; font-size: 10px; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: 0.1em; color: #8A8A93;">Quantity</th>
+          <th style="padding: 16px; font-size: 10px; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: 0.1em; color: #8A8A93;">Price</th>
+          <th style="padding: 16px; font-size: 10px; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: 0.1em; color: #8A8A93;">Threshold</th>
+          <th style="padding: 16px; font-size: 10px; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: 0.1em; color: #8A8A93;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let piece of pieces" style="border-bottom: 1px solid rgba(240,240,240,0.04); transition: background-color 0.2s ease;">
+          <td style="padding: 16px; font-size: 13px; color: #F0F0F0; font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.05em;">{{ piece.reference }}</td>
+          <td style="padding: 16px; font-size: 13px; color: #F0F0F0;">{{ piece.nom }}</td>
+          <td style="padding: 16px; font-size: 14px; font-family: 'Space Grotesk', sans-serif; font-weight: 600;" [ngStyle]="{'color': piece.quantite <= piece.seuilMin ? '#ff6b6b' : '#00A8E8'}">
+            {{ piece.quantite }}
+          </td>
+          <td style="padding: 16px; font-size: 13px; color: #F0F0F0;">${{ piece.prix }}</td>
+          <td style="padding: 16px; font-size: 13px; color: #8A8A93;">{{ piece.seuilMin }}</td>
+          <td style="padding: 16px; display: flex; gap: 8px;">
+            <button (click)="editPiece(piece)" style="background: transparent; color: #F28C28; border: 1px solid #F28C28; padding: 6px 12px; font-size: 10px; text-transform: uppercase; cursor: pointer; font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.05em;">Edit</button>
+            <button (click)="deletePiece(piece.id)" style="background: transparent; color: #ff6b6b; border: 1px solid #ff6b6b; padding: 6px 12px; font-size: 10px; text-transform: uppercase; cursor: pointer; font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.05em;">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="pieces.length === 0" style="padding: 32px; text-align: center; font-size: 12px; color: #8A8A93; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: 0.1em;">
+      No pieces in stock.
+    </div>
+  </div>
+</div>

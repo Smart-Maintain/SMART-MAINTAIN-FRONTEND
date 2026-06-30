@@ -1,0 +1,83 @@
+<div style="padding: 32px; max-width: 900px; margin: 0 auto; min-height: 100vh;">
+  <h1 style="font-size: 32px; font-weight: 400; color: #F0F0F0; font-family: 'Space Grotesk', sans-serif; margin-bottom: 8px;">My Team</h1>
+  <p style="color: #8A8A93; font-size: 14px; font-family: 'Inter', sans-serif; margin-bottom: 32px;">Overview of your assigned engineering or operational team.</p>
+
+  <div *ngIf="isLoading" style="color: #00A8E8; font-family: 'Space Grotesk', sans-serif;">Loading team data...</div>
+
+  <div *ngIf="!isLoading && !myTeam" style="background-color: #111114; border: 1px solid rgba(240,240,240,0.08); padding: 40px; text-align: center; color: #8A8A93; border-radius: 4px; font-family: 'Inter', sans-serif;">
+    You are not currently assigned to any team.
+  </div>
+
+  <div *ngIf="!isLoading && myTeam" style="display: flex; flex-direction: column; gap: 24px;">
+    <!-- Team Header -->
+    <div style="background-color: #111114; border: 1px solid rgba(240,240,240,0.08); padding: 24px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <h2 style="font-size: 24px; margin: 0; color: #00A8E8; font-family: 'Space Grotesk', sans-serif;">{{ myTeam.nom }}</h2>
+        <span style="font-size: 12px; color: #F28C28; text-transform: uppercase; letter-spacing: 0.1em; font-family: 'Space Grotesk', sans-serif;">Specialty: {{ myTeam.specialite || 'General' }}</span>
+      </div>
+    </div>
+
+    <!-- Leader -->
+    <div style="background-color: #111114; border: 1px solid rgba(240,240,240,0.08); padding: 24px; border-radius: 4px;">
+      <h3 style="font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em; color: #8A8A93; margin-top: 0; margin-bottom: 16px; font-family: 'Space Grotesk', sans-serif; border-bottom: 1px solid rgba(240,240,240,0.08); padding-bottom: 12px;">Leader Engineer</h3>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="width: 40px; height: 40px; border-radius: 50%; background-color: rgba(0,168,232,0.1); border: 1px solid #00A8E8; display: flex; justify-content: center; align-items: center; color: #00A8E8; font-family: 'Space Grotesk', sans-serif; font-weight: 700;">
+          {{ myTeam.leaderEngineerName ? myTeam.leaderEngineerName.substring(0,2).toUpperCase() : '?' }}
+        </div>
+        <div style="color: #F0F0F0; font-family: 'Inter', sans-serif; font-size: 15px;">
+          {{ myTeam.leaderEngineerName || 'Unassigned' }}
+          <span *ngIf="auth.user()?.name === myTeam.leaderEngineerName" style="font-size: 10px; background-color: #00A8E8; color: #0A0A0A; padding: 2px 6px; border-radius: 2px; margin-left: 8px; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif;">You</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Technicians -->
+    <div style="background-color: #111114; border: 1px solid rgba(240,240,240,0.08); padding: 24px; border-radius: 4px;">
+      <h3 style="font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em; color: #8A8A93; margin-top: 0; margin-bottom: 16px; font-family: 'Space Grotesk', sans-serif; border-bottom: 1px solid rgba(240,240,240,0.08); padding-bottom: 12px;">Team Members (Technicians)</h3>
+      
+      <div *ngIf="!myTeam.technicianNames || myTeam.technicianNames.length === 0" style="color: #8A8A93; font-size: 13px; font-family: 'Inter', sans-serif;">
+        No technicians assigned to this team.
+      </div>
+      
+      <div *ngIf="myTeam.technicianNames && myTeam.technicianNames.length > 0" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px;">
+        <div *ngFor="let tech of myTeam.technicianNames" style="display: flex; align-items: center; gap: 12px; background-color: #0A0A0A; border: 1px solid rgba(240,240,240,0.05); padding: 12px; border-radius: 4px;">
+          <div style="width: 32px; height: 32px; border-radius: 50%; background-color: rgba(242,140,40,0.1); border: 1px solid #F28C28; display: flex; justify-content: center; align-items: center; color: #F28C28; font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 700;">
+            {{ tech.substring(0,2).toUpperCase() }}
+          </div>
+          <div style="color: #F0F0F0; font-family: 'Inter', sans-serif; font-size: 14px;">
+            {{ tech }}
+            <span *ngIf="auth.user()?.name === tech" style="font-size: 10px; background-color: #F28C28; color: #0A0A0A; padding: 2px 6px; border-radius: 2px; margin-left: 8px; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif;">You</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Team Tasks -->
+    <div style="background-color: #111114; border: 1px solid rgba(240,240,240,0.08); padding: 24px; border-radius: 4px;">
+      <h3 style="font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em; color: #8A8A93; margin-top: 0; margin-bottom: 16px; font-family: 'Space Grotesk', sans-serif; border-bottom: 1px solid rgba(240,240,240,0.08); padding-bottom: 12px;">Team Tasks</h3>
+      
+      <div *ngIf="!myTeam.tasks || myTeam.tasks.length === 0" style="color: #8A8A93; font-size: 13px; font-family: 'Inter', sans-serif;">
+        No tasks currently assigned to this team.
+      </div>
+      
+      <div *ngIf="myTeam.tasks && myTeam.tasks.length > 0" style="display: flex; flex-direction: column; gap: 12px;">
+        <div *ngFor="let task of myTeam.tasks" style="background-color: #0A0A0A; border: 1px solid rgba(240,240,240,0.05); padding: 16px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="color: #F0F0F0; font-family: 'Space Grotesk', sans-serif; font-weight: 500; font-size: 15px; margin-bottom: 4px;">{{ task.title }}</div>
+            <div style="color: #8A8A93; font-family: 'Inter', sans-serif; font-size: 13px;">{{ task.description }}</div>
+          </div>
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <span style="font-size: 11px; padding: 4px 8px; border-radius: 4px; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase;"
+                  [style.backgroundColor]="task.priority === 'critical' ? 'rgba(255, 59, 48, 0.1)' : 'rgba(0, 168, 232, 0.1)'"
+                  [style.color]="task.priority === 'critical' ? '#FF3B30' : '#00A8E8'">
+              {{ task.priority }}
+            </span>
+            <span style="font-size: 11px; padding: 4px 8px; border-radius: 4px; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; background-color: rgba(240,240,240,0.05); color: #8A8A93;">
+              {{ task.status.replace('_', ' ') }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

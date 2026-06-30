@@ -1,0 +1,30 @@
+<div class="chatbot" [class.open]="isOpen">
+  <button class="chatbot-toggle" type="button" (click)="toggle()" aria-label="Toggle assistant">
+    AI
+  </button>
+
+  <section *ngIf="isOpen" class="chatbot-panel">
+    <header>
+      <span>Maintenance Assistant</span>
+      <button type="button" (click)="toggle()" aria-label="Close assistant">x</button>
+    </header>
+
+    <div class="chatbot-messages">
+      <div *ngFor="let item of messages" [class.user]="item.from === 'user'" class="chatbot-message">
+        {{ item.text }}
+      </div>
+      <div *ngIf="isPending" class="chatbot-message">Thinking...</div>
+    </div>
+
+    <form (ngSubmit)="send()" class="chatbot-form">
+      <input
+        type="text"
+        name="message"
+        [(ngModel)]="message"
+        placeholder="Ask a question"
+        autocomplete="off"
+      />
+      <button type="submit" [disabled]="isPending || !message.trim()">Send</button>
+    </form>
+  </section>
+</div>

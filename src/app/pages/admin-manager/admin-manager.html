@@ -1,0 +1,3096 @@
+<div style="padding: 24px">
+  <div style="margin-bottom: 32px">
+    <h1
+      style="
+        font-size: clamp(24px, 3vw, 36px);
+        font-weight: 400;
+        color: #f0f0f0;
+        letter-spacing: -0.02em;
+        font-family: 'Space Grotesk', 'Helvetica Neue', sans-serif;
+        margin-bottom: 8px;
+      "
+    >
+      {{ auth.user()?.role === 'admin' ? 'Admin Control Panel' : 'Manager Dashboard' }}
+    </h1>
+    <p style="color: #8a8a93; font-size: 14px; font-family: 'Inter', sans-serif">
+      Fleet management, user oversight, and operational analytics.
+    </p>
+  </div>
+
+  <!-- Tabs -->
+  <div
+    style="
+      display: flex;
+      gap: 2px;
+      margin-bottom: 32px;
+      border-bottom: 1px solid rgba(240, 240, 240, 0.06);
+    "
+  >
+    <button
+      (click)="setActiveTab('overview')"
+      [style.background-color]="activeTab === 'overview' ? 'rgba(242,140,40,0.08)' : 'transparent'"
+      [style.border-bottom]="
+        activeTab === 'overview' ? '2px solid #F28C28' : '2px solid transparent'
+      "
+      [style.color]="activeTab === 'overview' ? '#F28C28' : '#8A8A93'"
+      style="
+        padding: 12px 24px;
+        border: none;
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      "
+    >
+      Fleet Overview
+    </button>
+    <button
+      (click)="setActiveTab('team')"
+      [style.background-color]="activeTab === 'team' ? 'rgba(242,140,40,0.08)' : 'transparent'"
+      [style.border-bottom]="activeTab === 'team' ? '2px solid #F28C28' : '2px solid transparent'"
+      [style.color]="activeTab === 'team' ? '#F28C28' : '#8A8A93'"
+      style="
+        padding: 12px 24px;
+        border: none;
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      "
+    >
+      Team Performance
+    </button>
+    <button
+      (click)="setActiveTab('teams')"
+      [style.background-color]="activeTab === 'teams' ? 'rgba(242,140,40,0.08)' : 'transparent'"
+      [style.border-bottom]="activeTab === 'teams' ? '2px solid #F28C28' : '2px solid transparent'"
+      [style.color]="activeTab === 'teams' ? '#F28C28' : '#8A8A93'"
+      style="
+        padding: 12px 24px;
+        border: none;
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      "
+    >
+      Teams
+    </button>
+    <button
+      (click)="setActiveTab('assignments')"
+      [style.background-color]="
+        activeTab === 'assignments' ? 'rgba(242,140,40,0.08)' : 'transparent'
+      "
+      [style.border-bottom]="
+        activeTab === 'assignments' ? '2px solid #F28C28' : '2px solid transparent'
+      "
+      [style.color]="activeTab === 'assignments' ? '#F28C28' : '#8A8A93'"
+      style="
+        padding: 12px 24px;
+        border: none;
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      "
+    >
+      Assignments
+    </button>
+    <button
+      (click)="setActiveTab('tasks')"
+      [style.background-color]="activeTab === 'tasks' ? 'rgba(242,140,40,0.08)' : 'transparent'"
+      [style.border-bottom]="activeTab === 'tasks' ? '2px solid #F28C28' : '2px solid transparent'"
+      [style.color]="activeTab === 'tasks' ? '#F28C28' : '#8A8A93'"
+      style="
+        padding: 12px 24px;
+        border: none;
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      "
+    >
+      Tasks
+    </button>
+    <button
+      (click)="setActiveTab('reports')"
+      [style.background-color]="activeTab === 'reports' ? 'rgba(242,140,40,0.08)' : 'transparent'"
+      [style.border-bottom]="
+        activeTab === 'reports' ? '2px solid #F28C28' : '2px solid transparent'
+      "
+      [style.color]="activeTab === 'reports' ? '#F28C28' : '#8A8A93'"
+      style="
+        padding: 12px 24px;
+        border: none;
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      "
+    >
+      Rapports
+    </button>
+    <button
+      (click)="setActiveTab('costs')"
+      [style.background-color]="activeTab === 'costs' ? 'rgba(242,140,40,0.08)' : 'transparent'"
+      [style.border-bottom]="activeTab === 'costs' ? '2px solid #F28C28' : '2px solid transparent'"
+      [style.color]="activeTab === 'costs' ? '#F28C28' : '#8A8A93'"
+      style="
+        padding: 12px 24px;
+        border: none;
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      "
+    >
+      Cost Analysis
+    </button>
+    <button
+      *ngIf="auth.hasRole(['admin'])"
+      (click)="setActiveTab('engines')"
+      [style.background-color]="activeTab === 'engines' ? 'rgba(242,140,40,0.08)' : 'transparent'"
+      [style.border-bottom]="
+        activeTab === 'engines' ? '2px solid #F28C28' : '2px solid transparent'
+      "
+      [style.color]="activeTab === 'engines' ? '#F28C28' : '#8A8A93'"
+      style="
+        padding: 12px 24px;
+        border: none;
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      "
+    >
+      Engines
+    </button>
+    <button
+      *ngIf="auth.hasRole(['admin'])"
+      (click)="setActiveTab('accounts')"
+      [style.background-color]="activeTab === 'accounts' ? 'rgba(242,140,40,0.08)' : 'transparent'"
+      [style.border-bottom]="
+        activeTab === 'accounts' ? '2px solid #F28C28' : '2px solid transparent'
+      "
+      [style.color]="activeTab === 'accounts' ? '#F28C28' : '#8A8A93'"
+      style="
+        padding: 12px 24px;
+        border: none;
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      "
+    >
+      Accounts
+    </button>
+    <button
+      *ngIf="auth.hasRole(['admin'])"
+      (click)="setActiveTab('feedbacks')"
+      [style.background-color]="activeTab === 'feedbacks' ? 'rgba(242,140,40,0.08)' : 'transparent'"
+      [style.border-bottom]="
+        activeTab === 'feedbacks' ? '2px solid #F28C28' : '2px solid transparent'
+      "
+      [style.color]="activeTab === 'feedbacks' ? '#F28C28' : '#8A8A93'"
+      style="
+        padding: 12px 24px;
+        border: none;
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      "
+    >
+      User Feedbacks
+    </button>
+  </div>
+
+  <ng-container *ngIf="activeTab === 'overview'">
+    <!-- Summary Cards -->
+    <div
+      style="
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2px;
+        background-color: rgba(240, 240, 240, 0.06);
+        border: 1px solid rgba(240, 240, 240, 0.06);
+        margin-bottom: 32px;
+      "
+    >
+      <div
+        style="
+          background-color: #0a0a0a;
+          padding: 24px;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        "
+      >
+        <span
+          style="
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            color: #8a8a93;
+            text-transform: uppercase;
+            font-family: 'Space Grotesk', sans-serif;
+          "
+          >Fleet Health Avg</span
+        >
+        <span
+          style="
+            font-size: 32px;
+            font-weight: 700;
+            color: #00a8e8;
+            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: -0.02em;
+          "
+          >88.2%</span
+        >
+      </div>
+      <div
+        style="
+          background-color: #0a0a0a;
+          padding: 24px;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        "
+      >
+        <span
+          style="
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            color: #8a8a93;
+            text-transform: uppercase;
+            font-family: 'Space Grotesk', sans-serif;
+          "
+          >Active Tasks</span
+        >
+        <span
+          style="
+            font-size: 32px;
+            font-weight: 700;
+            color: #f28c28;
+            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: -0.02em;
+          "
+          >{{ tasks.length }}</span
+        >
+      </div>
+      <div
+        style="
+          background-color: #0a0a0a;
+          padding: 24px;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        "
+      >
+        <span
+          style="
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            color: #8a8a93;
+            text-transform: uppercase;
+            font-family: 'Space Grotesk', sans-serif;
+          "
+          >Critical Alerts</span
+        >
+        <span
+          style="
+            font-size: 32px;
+            font-weight: 700;
+            color: #ff6b6b;
+            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: -0.02em;
+          "
+          >{{ criticalAlertsCount }}</span
+        >
+      </div>
+      <div
+        style="
+          background-color: #0a0a0a;
+          padding: 24px;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        "
+      >
+        <span
+          style="
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            color: #8a8a93;
+            text-transform: uppercase;
+            font-family: 'Space Grotesk', sans-serif;
+          "
+          >MTBF</span
+        >
+        <span
+          style="
+            font-size: 32px;
+            font-weight: 700;
+            color: #00a8e8;
+            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: -0.02em;
+          "
+          >2,400h</span
+        >
+      </div>
+    </div>
+
+    <!-- Radar Chart (Placeholder) -->
+    <div
+      style="
+        background-color: #0a0a0a;
+        border: 1px solid rgba(240, 240, 240, 0.06);
+        padding: 24px;
+        margin-bottom: 32px;
+      "
+    >
+      <h3
+        style="
+          font-size: 14px;
+          font-weight: 500;
+          color: #f0f0f0;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          margin-bottom: 20px;
+          font-family: 'Space Grotesk', sans-serif;
+        "
+      >
+        Fleet Performance Radar
+      </h3>
+      <div
+        style="
+          width: 100%;
+          height: 350px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: rgba(240, 240, 240, 0.02);
+          color: #8a8a93;
+          font-size: 12px;
+          font-family: 'Inter', sans-serif;
+          border: 1px dashed rgba(240, 240, 240, 0.1);
+        "
+      >
+        [Radar Chart Placeholder]
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="activeTab === 'tasks'">
+    <!-- Task Management Table -->
+    <div
+      style="background-color: #0a0a0a; border: 1px solid rgba(240, 240, 240, 0.06); padding: 24px"
+    >
+      <h3
+        style="
+          font-size: 14px;
+          font-weight: 500;
+          color: #f0f0f0;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          margin-bottom: 20px;
+          font-family: 'Space Grotesk', sans-serif;
+        "
+      >
+        Tasks Management
+      </h3>
+
+      <div
+        style="
+          background-color: #111114;
+          border: 1px solid rgba(240, 240, 240, 0.12);
+          padding: 20px;
+          margin-bottom: 24px;
+        "
+      >
+        <h4
+          style="
+            font-size: 12px;
+            color: #f0f0f0;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            letter-spacing: 0.1em;
+          "
+        >
+          Create New Task
+        </h4>
+        <form (ngSubmit)="createTask()" style="display: flex; flex-direction: column; gap: 16px">
+          <div
+            style="
+              display: grid;
+              grid-template-columns: minmax(220px, 2fr) repeat(3, minmax(140px, 1fr));
+              gap: 12px;
+            "
+          >
+            <input
+              type="text"
+              name="taskDescription"
+              [(ngModel)]="taskForm.description"
+              placeholder="Task description"
+              required
+              style="
+                background-color: #111114;
+                color: #f0f0f0;
+                border: 1px solid rgba(240, 240, 240, 0.12);
+                padding: 10px;
+                min-width: 0;
+              "
+            />
+            <select
+              name="taskPriority"
+              [(ngModel)]="taskForm.priorite"
+              style="
+                background-color: #111114;
+                color: #f0f0f0;
+                border: 1px solid rgba(240, 240, 240, 0.12);
+                padding: 10px;
+              "
+            >
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+              <option value="critical">Critical</option>
+            </select>
+            <select
+              name="taskTeam"
+              [(ngModel)]="taskForm.equipeId"
+              style="
+                background-color: #111114;
+                color: #f0f0f0;
+                border: 1px solid rgba(240, 240, 240, 0.12);
+                padding: 10px;
+              "
+            >
+              <option value="">No team (Unassigned)</option>
+              <option *ngFor="let team of teams" [value]="team.id">{{ team.nom }}</option>
+            </select>
+            <select
+              name="taskEquipment"
+              [(ngModel)]="taskForm.taxonomieId"
+              style="
+                background-color: #111114;
+                color: #f0f0f0;
+                border: 1px solid rgba(240, 240, 240, 0.12);
+                padding: 10px;
+              "
+            >
+              <option value="">Any engine</option>
+              <option
+                *ngFor="let equipment of equipements"
+                [value]="
+                  $safeNavigationMigration($safeNavigationMigration(equipment.taxonomie?.id))
+                "
+              >
+                {{ equipment.label }}
+              </option>
+            </select>
+          </div>
+
+          <div
+            style="
+              background-color: #0a0a0a;
+              border: 1px dashed rgba(240, 240, 240, 0.12);
+              padding: 16px;
+            "
+          >
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+              "
+            >
+              <h4
+                style="
+                  font-size: 11px;
+                  color: #8a8a93;
+                  text-transform: uppercase;
+                  letter-spacing: 0.05em;
+                  margin: 0;
+                "
+              >
+                Sub-Tasks (Optional)
+              </h4>
+              <button
+                type="button"
+                (click)="addSubTask()"
+                style="
+                  background: none;
+                  border: 1px solid rgba(0, 168, 232, 0.4);
+                  color: #00a8e8;
+                  padding: 4px 10px;
+                  font-size: 10px;
+                  cursor: pointer;
+                  text-transform: uppercase;
+                "
+              >
+                + Add Sub-Task
+              </button>
+            </div>
+            <div
+              *ngIf="taskForm.subTasks.length === 0"
+              style="color: #8a8a93; font-size: 11px; font-style: italic"
+            >
+              No sub-tasks added.
+            </div>
+            <div
+              *ngFor="let st of taskForm.subTasks; let i = index"
+              style="display: flex; gap: 12px; margin-bottom: 8px"
+            >
+              <input
+                type="text"
+                [(ngModel)]="st.description"
+                name="stDesc{{ i }}"
+                placeholder="Sub-task description"
+                style="
+                  flex: 1;
+                  background-color: #111114;
+                  color: #f0f0f0;
+                  border: 1px solid rgba(240, 240, 240, 0.12);
+                  padding: 8px;
+                  font-size: 12px;
+                "
+                required
+              />
+              <button
+                type="button"
+                (click)="removeSubTask(i)"
+                style="
+                  background: none;
+                  border: 1px solid #ff6b6b;
+                  color: #ff6b6b;
+                  padding: 0 12px;
+                  font-size: 16px;
+                  cursor: pointer;
+                  line-height: 1;
+                "
+              >
+                &times;
+              </button>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end">
+            <button
+              type="submit"
+              style="
+                background-color: #f28c28;
+                color: #0a0a0a;
+                border: none;
+                padding: 11px 24px;
+                font-size: 11px;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                font-weight: 700;
+                cursor: pointer;
+              "
+            >
+              Create Task
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div
+        *ngIf="tasks.length === 0"
+        style="
+          padding: 40px;
+          text-align: center;
+          color: #8a8a93;
+          font-size: 13px;
+          font-family: 'Inter', sans-serif;
+        "
+      >
+        No tasks created yet. Use the form above to create your first task.
+      </div>
+      <div *ngIf="tasks.length > 0" style="display: flex; flex-direction: column; gap: 12px">
+        <div
+          *ngFor="let task of tasks"
+          style="
+            background-color: #111114;
+            border: 1px solid rgba(240, 240, 240, 0.08);
+            border-radius: 4px;
+            overflow: hidden;
+            transition: all 0.2s ease;
+          "
+        >
+          <!-- Header / Summary Row -->
+          <div
+            (click)="toggleTask(task.id)"
+            style="
+              padding: 16px 20px;
+              display: grid;
+              grid-template-columns: 80px 2fr 1fr 1fr 100px 40px;
+              align-items: center;
+              gap: 16px;
+              cursor: pointer;
+              background-color: #111114;
+            "
+            [style.border-left]="
+              expandedTaskId === task.id ? '3px solid #ff6b6b' : '3px solid transparent'
+            "
+          >
+            <div style="font-size: 13px; color: #8a8a93; font-family: 'Inter', sans-serif">
+              #{{ task.id.substring(0, 8) }}
+            </div>
+            <div
+              style="
+                font-size: 14px;
+                font-weight: 500;
+                color: #f0f0f0;
+                font-family: 'Inter', sans-serif;
+              "
+            >
+              {{ task.title }}
+            </div>
+            <div style="display: flex; gap: 8px">
+              <span
+                [style.color]="getBadgeColor('priority', task.priority)"
+                [style.border]="'1px solid ' + getBadgeColor('priority', task.priority)"
+                style="
+                  padding: 2px 8px;
+                  font-size: 10px;
+                  letter-spacing: 0.08em;
+                  text-transform: uppercase;
+                "
+              >
+                {{ task.priority }}
+              </span>
+            </div>
+            <div>
+              <span
+                [style.color]="getBadgeColor('status', task.status)"
+                [style.border]="'1px solid ' + getBadgeColor('status', task.status)"
+                style="
+                  padding: 2px 8px;
+                  font-size: 10px;
+                  letter-spacing: 0.08em;
+                  text-transform: uppercase;
+                "
+              >
+                {{ task.status.replace('_', ' ') }}
+              </span>
+            </div>
+            <div style="font-size: 12px; color: #8a8a93; font-family: 'Inter', sans-serif">
+              {{ task.dueDate }}
+            </div>
+            <div style="color: #8a8a93; display: flex; justify-content: flex-end">
+              <svg
+                *ngIf="expandedTaskId !== task.id"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+              <svg
+                *ngIf="expandedTaskId === task.id"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="m18 15-6-6-6 6" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Expanded Details -->
+          <div
+            *ngIf="expandedTaskId === task.id"
+            style="
+              padding: 20px;
+              border-top: 1px solid rgba(240, 240, 240, 0.04);
+              background-color: #0a0a0a;
+            "
+          >
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px">
+              <div>
+                <h4
+                  style="
+                    font-size: 11px;
+                    letter-spacing: 0.1em;
+                    color: #8a8a93;
+                    text-transform: uppercase;
+                    margin-bottom: 8px;
+                    font-family: 'Space Grotesk', sans-serif;
+                  "
+                >
+                  Description
+                </h4>
+                <p
+                  style="
+                    font-size: 14px;
+                    color: #f0f0f0;
+                    font-family: 'Inter', sans-serif;
+                    line-height: 1.6;
+                    margin-bottom: 24px;
+                  "
+                >
+                  {{ task.description || 'No description provided.' }}
+                </p>
+
+                <div *ngIf="task.subTasks && task.subTasks.length > 0" style="margin-bottom: 24px">
+                  <h4
+                    style="
+                      font-size: 11px;
+                      letter-spacing: 0.1em;
+                      color: #8a8a93;
+                      text-transform: uppercase;
+                      margin-bottom: 8px;
+                      font-family: 'Space Grotesk', sans-serif;
+                    "
+                  >
+                    Sub-Tasks
+                  </h4>
+                  <ul
+                    style="
+                      list-style-type: none;
+                      padding: 0;
+                      margin: 0;
+                      display: flex;
+                      flex-direction: column;
+                      gap: 8px;
+                    "
+                  >
+                    <li
+                      *ngFor="let st of task.subTasks"
+                      style="
+                        display: flex;
+                        justify-content: space-between;
+                        background-color: #111114;
+                        padding: 10px 14px;
+                        border: 1px solid rgba(240, 240, 240, 0.06);
+                        font-size: 13px;
+                      "
+                    >
+                      <span style="color: #f0f0f0">{{ st.description }}</span>
+                      <div style="display: flex; gap: 12px; align-items: center">
+                        <span style="color: #8a8a93; font-size: 11px">{{
+                          st.assignedMemberName
+                            ? 'Assigned: ' + st.assignedMemberName
+                            : 'Unassigned'
+                        }}</span>
+                        <span
+                          [style.color]="st.status === 'DONE' ? '#00A8E8' : '#F28C28'"
+                          style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em"
+                          >{{ st.status }}</span
+                        >
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px">
+                  <div>
+                    <h4
+                      style="
+                        font-size: 11px;
+                        letter-spacing: 0.1em;
+                        color: #8a8a93;
+                        text-transform: uppercase;
+                        margin-bottom: 8px;
+                        font-family: 'Space Grotesk', sans-serif;
+                      "
+                    >
+                      Equipment
+                    </h4>
+                    <p
+                      style="
+                        font-size: 13px;
+                        color: #f0f0f0;
+                        font-family: 'Inter', sans-serif;
+                        margin-bottom: 4px;
+                      "
+                    >
+                      {{ task.engineName }}
+                    </p>
+                    <p style="font-size: 12px; color: #8a8a93; font-family: 'Inter', sans-serif">
+                      Category: {{ task.category }}
+                    </p>
+                  </div>
+                  <div>
+                    <h4
+                      style="
+                        font-size: 11px;
+                        letter-spacing: 0.1em;
+                        color: #8a8a93;
+                        text-transform: uppercase;
+                        margin-bottom: 8px;
+                        font-family: 'Space Grotesk', sans-serif;
+                      "
+                    >
+                      Assignment Info
+                    </h4>
+                    <p style="font-size: 12px; color: #f0f0f0; font-family: 'Inter', sans-serif">
+                      Team ID: {{ task.equipeId || 'Unassigned' }}
+                    </p>
+                    <p style="font-size: 12px; color: #8a8a93; font-family: 'Inter', sans-serif">
+                      Maint ID: {{ task.maintenanceId || 'None' }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 24px">
+                <div>
+                  <h4
+                    style="
+                      font-size: 11px;
+                      letter-spacing: 0.1em;
+                      color: #8a8a93;
+                      text-transform: uppercase;
+                      margin-bottom: 8px;
+                      font-family: 'Space Grotesk', sans-serif;
+                    "
+                  >
+                    Technician Note
+                  </h4>
+                  <div
+                    style="
+                      background-color: #111114;
+                      color: #f0f0f0;
+                      border: 1px solid rgba(240, 240, 240, 0.12);
+                      padding: 12px;
+                      font-size: 13px;
+                      min-height: 40px;
+                    "
+                  >
+                    {{ task.technicianNote || 'No notes added by technician.' }}
+                  </div>
+                </div>
+
+                <div>
+                  <h4
+                    style="
+                      font-size: 11px;
+                      letter-spacing: 0.1em;
+                      color: #8a8a93;
+                      text-transform: uppercase;
+                      margin-bottom: 8px;
+                      font-family: 'Space Grotesk', sans-serif;
+                    "
+                  >
+                    Rapport
+                  </h4>
+                  <a
+                    [routerLink]="['/' + (auth.user()?.role || 'admin') + '/rapport', task.id]"
+                    style="
+                      display: inline-block;
+                      background-color: #ff6b6b;
+                      color: #0a0a0a;
+                      padding: 10px 20px;
+                      font-size: 12px;
+                      font-weight: 700;
+                      text-transform: uppercase;
+                      text-decoration: none;
+                      font-family: 'Space Grotesk', sans-serif;
+                      text-align: center;
+                      width: 100%;
+                    "
+                  >
+                    Open Full Rapport
+                  </a>
+                </div>
+
+                <div
+                  style="
+                    border-top: 1px solid rgba(240, 240, 240, 0.08);
+                    padding-top: 16px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                  "
+                >
+                  <span
+                    style="
+                      font-size: 11px;
+                      letter-spacing: 0.1em;
+                      color: #8a8a93;
+                      text-transform: uppercase;
+                      font-family: 'Space Grotesk', sans-serif;
+                    "
+                    >Admin Actions</span
+                  >
+                  <div style="display: flex; gap: 8px">
+                    <button
+                      *ngIf="task.status !== 'completed'"
+                      (click)="completeTask(task.id)"
+                      style="
+                        background-color: #00a8e8;
+                        color: #0a0a0a;
+                        border: none;
+                        padding: 6px 12px;
+                        font-size: 10px;
+                        font-weight: 700;
+                        text-transform: uppercase;
+                        cursor: pointer;
+                        font-family: 'Space Grotesk', sans-serif;
+                      "
+                    >
+                      Complete
+                    </button>
+                    <button
+                      (click)="openEditTask(task)"
+                      style="
+                        background-color: transparent;
+                        color: #f28c28;
+                        border: 1px solid rgba(242, 140, 40, 0.4);
+                        padding: 6px 12px;
+                        font-size: 10px;
+                        font-weight: 700;
+                        text-transform: uppercase;
+                        cursor: pointer;
+                        font-family: 'Space Grotesk', sans-serif;
+                      "
+                    >
+                      Edit
+                    </button>
+                    <button
+                      (click)="deleteTask(task.id)"
+                      style="
+                        background-color: transparent;
+                        color: #ff6b6b;
+                        border: 1px solid rgba(255, 107, 107, 0.4);
+                        padding: 6px 12px;
+                        font-size: 10px;
+                        font-weight: 700;
+                        text-transform: uppercase;
+                        cursor: pointer;
+                        font-family: 'Space Grotesk', sans-serif;
+                      "
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Task Modal -->
+    <div
+      *ngIf="editTaskModalOpen"
+      style="
+        position: fixed;
+        inset: 0;
+        background-color: rgba(10, 10, 10, 0.85);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        backdrop-filter: blur(4px);
+      "
+    >
+      <div
+        style="
+          background-color: #0a0a0a;
+          border: 1px solid rgba(240, 240, 240, 0.12);
+          padding: 32px;
+          width: 100%;
+          max-width: 600px;
+          max-height: 90vh;
+          overflow-y: auto;
+        "
+      >
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+          "
+        >
+          <h2
+            style="
+              font-size: 18px;
+              font-weight: 500;
+              color: #f0f0f0;
+              letter-spacing: 0.1em;
+              text-transform: uppercase;
+              font-family: 'Space Grotesk', sans-serif;
+            "
+          >
+            Edit Task
+          </h2>
+          <button
+            (click)="closeEditTask()"
+            style="background: none; border: none; color: #8a8a93; font-size: 24px; cursor: pointer"
+          >
+            &times;
+          </button>
+        </div>
+
+        <form (ngSubmit)="saveTask()" style="display: flex; flex-direction: column; gap: 16px">
+          <div>
+            <label
+              style="
+                display: block;
+                font-size: 11px;
+                color: #8a8a93;
+                text-transform: uppercase;
+                margin-bottom: 8px;
+              "
+              >Description</label
+            >
+            <textarea
+              name="editDesc"
+              [(ngModel)]="editTaskForm.description"
+              rows="3"
+              required
+              style="
+                width: 100%;
+                background-color: #111114;
+                color: #f0f0f0;
+                border: 1px solid rgba(240, 240, 240, 0.12);
+                padding: 10px;
+              "
+            ></textarea>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px">
+            <div>
+              <label
+                style="
+                  display: block;
+                  font-size: 11px;
+                  color: #8a8a93;
+                  text-transform: uppercase;
+                  margin-bottom: 8px;
+                "
+                >Priority</label
+              >
+              <select
+                name="editPrio"
+                [(ngModel)]="editTaskForm.priorite"
+                style="
+                  width: 100%;
+                  background-color: #111114;
+                  color: #f0f0f0;
+                  border: 1px solid rgba(240, 240, 240, 0.12);
+                  padding: 10px;
+                "
+              >
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="critical">Critical</option>
+              </select>
+            </div>
+            <div>
+              <label
+                style="
+                  display: block;
+                  font-size: 11px;
+                  color: #8a8a93;
+                  text-transform: uppercase;
+                  margin-bottom: 8px;
+                "
+                >Status</label
+              >
+              <select
+                name="editStatus"
+                [(ngModel)]="editTaskForm.status"
+                style="
+                  width: 100%;
+                  background-color: #111114;
+                  color: #f0f0f0;
+                  border: 1px solid rgba(240, 240, 240, 0.12);
+                  padding: 10px;
+                "
+              >
+                <option value="pending">Pending</option>
+                <option value="in_progress">In Progress</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+          </div>
+
+          <div
+            style="
+              background-color: #111114;
+              border: 1px dashed rgba(240, 240, 240, 0.12);
+              padding: 16px;
+              margin-top: 8px;
+            "
+          >
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+              "
+            >
+              <h4
+                style="
+                  font-size: 11px;
+                  color: #8a8a93;
+                  text-transform: uppercase;
+                  letter-spacing: 0.05em;
+                  margin: 0;
+                "
+              >
+                Sub-Tasks
+              </h4>
+              <button
+                type="button"
+                (click)="addEditSubTask()"
+                style="
+                  background: none;
+                  border: 1px solid rgba(0, 168, 232, 0.4);
+                  color: #00a8e8;
+                  padding: 4px 10px;
+                  font-size: 10px;
+                  cursor: pointer;
+                  text-transform: uppercase;
+                "
+              >
+                + Add Sub-Task
+              </button>
+            </div>
+            <div
+              *ngIf="editTaskForm.subTasks.length === 0"
+              style="color: #8a8a93; font-size: 11px; font-style: italic"
+            >
+              No sub-tasks added.
+            </div>
+            <div
+              *ngFor="let st of editTaskForm.subTasks; let i = index"
+              style="display: flex; gap: 12px; margin-bottom: 8px"
+            >
+              <input
+                type="text"
+                [(ngModel)]="st.description"
+                name="estDesc{{ i }}"
+                placeholder="Sub-task description"
+                style="
+                  flex: 1;
+                  background-color: #0a0a0a;
+                  color: #f0f0f0;
+                  border: 1px solid rgba(240, 240, 240, 0.12);
+                  padding: 8px;
+                  font-size: 12px;
+                "
+                required
+              />
+              <button
+                type="button"
+                (click)="removeEditSubTask(i)"
+                style="
+                  background: none;
+                  border: 1px solid #ff6b6b;
+                  color: #ff6b6b;
+                  padding: 0 12px;
+                  font-size: 16px;
+                  cursor: pointer;
+                  line-height: 1;
+                "
+              >
+                &times;
+              </button>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px">
+            <button
+              type="button"
+              (click)="closeEditTask()"
+              style="
+                background: none;
+                border: 1px solid rgba(240, 240, 240, 0.12);
+                color: #8a8a93;
+                padding: 12px 24px;
+                font-size: 11px;
+                text-transform: uppercase;
+                cursor: pointer;
+              "
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              style="
+                background-color: #00a8e8;
+                color: #0a0a0a;
+                border: none;
+                padding: 12px 24px;
+                font-size: 11px;
+                font-weight: 700;
+                text-transform: uppercase;
+                cursor: pointer;
+              "
+            >
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="activeTab === 'teams'">
+    <div style="display: grid; grid-template-columns: minmax(280px, 420px) 1fr; gap: 24px">
+      <!-- Create Team Form -->
+      <form
+        (ngSubmit)="createTeam()"
+        style="
+          background-color: #0a0a0a;
+          border: 1px solid rgba(240, 240, 240, 0.06);
+          padding: 24px;
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+        "
+      >
+        <h3
+          style="
+            font-size: 14px;
+            font-weight: 500;
+            color: #f0f0f0;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            font-family: 'Space Grotesk', sans-serif;
+          "
+        >
+          Create Team
+        </h3>
+        <div
+          *ngIf="errorMessage"
+          style="
+            background-color: rgba(255, 107, 107, 0.1);
+            color: #ff6b6b;
+            padding: 10px;
+            border-left: 2px solid #ff6b6b;
+            font-size: 12px;
+            margin-bottom: 8px;
+          "
+        >
+          {{ errorMessage }}
+        </div>
+        <input
+          name="teamName"
+          [(ngModel)]="teamForm.nom"
+          required
+          placeholder="Team name"
+          style="
+            background-color: #111114;
+            color: #f0f0f0;
+            border: 1px solid rgba(240, 240, 240, 0.12);
+            padding: 10px;
+          "
+        />
+
+        <!-- Specialty Dropdown -->
+        <select
+          name="teamSpeciality"
+          [(ngModel)]="teamForm.specialite"
+          required
+          style="
+            background-color: #111114;
+            color: #f0f0f0;
+            border: 1px solid rgba(240, 240, 240, 0.12);
+            padding: 10px;
+          "
+        >
+          <option *ngFor="let spec of specialties" [value]="spec">{{ spec }}</option>
+        </select>
+
+        <select
+          name="leaderEngineer"
+          [(ngModel)]="teamForm.leaderEngineerId"
+          required
+          style="
+            background-color: #111114;
+            color: #f0f0f0;
+            border: 1px solid rgba(240, 240, 240, 0.12);
+            padding: 10px;
+          "
+        >
+          <option value="">Leader engineer/manager</option>
+          <option *ngFor="let leader of leaderCandidates" [value]="leader.id">
+            {{ userLabel(leader) }}
+          </option>
+        </select>
+        <div
+          style="
+            min-height: 120px;
+            max-height: 180px;
+            overflow-y: auto;
+            background-color: #111114;
+            border: 1px solid rgba(240, 240, 240, 0.12);
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+          "
+        >
+          <div
+            *ngIf="technicianCandidates.length === 0"
+            style="color: #8a8a93; font-size: 11px; padding: 4px"
+          >
+            No members available
+          </div>
+          <div
+            *ngFor="let technician of technicianCandidates"
+            (click)="toggleTechnician(technician.id)"
+            [style.background-color]="
+              selectedTechnicianIds.includes(technician.id) ? 'rgba(0,168,232,0.15)' : 'transparent'
+            "
+            [style.color]="selectedTechnicianIds.includes(technician.id) ? '#00A8E8' : '#F0F0F0'"
+            [style.border]="
+              selectedTechnicianIds.includes(technician.id)
+                ? '1px solid rgba(0,168,232,0.3)'
+                : '1px solid transparent'
+            "
+            style="
+              padding: 6px 10px;
+              cursor: pointer;
+              border-radius: 4px;
+              font-size: 12px;
+              transition: all 0.2s;
+              user-select: none;
+            "
+          >
+            {{ userLabel(technician) }}
+          </div>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: -6px; margin-bottom: 8px">
+          <div
+            *ngFor="let tech of getSelectedTechniciansList(); trackBy: trackById"
+            (click)="removeSelectedTechnician(tech.id)"
+            style="
+              background-color: rgba(0, 168, 232, 0.1);
+              border: 1px solid #00a8e8;
+              color: #00a8e8;
+              padding: 4px 10px;
+              font-size: 10px;
+              border-radius: 12px;
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              gap: 6px;
+            "
+            title="Click to remove"
+          >
+            {{ userLabel(tech) }} <span style="font-weight: bold">×</span>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          style="
+            background-color: #f28c28;
+            color: #0a0a0a;
+            border: none;
+            padding: 12px;
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-weight: 700;
+            cursor: pointer;
+          "
+        >
+          Create Team
+        </button>
+      </form>
+
+      <!-- Teams List & Editor -->
+      <div style="display: flex; flex-direction: column; gap: 16px">
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+          "
+        >
+          <article
+            *ngFor="let team of teams"
+            style="
+              background-color: #0a0a0a;
+              border: 1px solid rgba(240, 240, 240, 0.06);
+              padding: 20px;
+            "
+          >
+            <h3 style="font-size: 16px; color: #f0f0f0; margin-bottom: 8px">{{ team.nom }}</h3>
+            <p style="font-size: 12px; color: #8a8a93; margin-bottom: 12px">
+              Speciality: {{ team.specialite }}
+            </p>
+            <p style="font-size: 12px; color: #00a8e8; margin-bottom: 8px">
+              Leader: {{ team.leaderEngineerName || 'Unassigned' }}
+            </p>
+            <p style="font-size: 12px; color: #8a8a93; margin-bottom: 16px">
+              Technicians/Members: {{ team.technicianNames?.join(', ') || 'None' }}
+            </p>
+
+            <div style="display: flex; gap: 8px; margin-top: 12px">
+              <button
+                (click)="openEditTeam(team)"
+                style="
+                  background: none;
+                  border: 1px solid #00a8e8;
+                  color: #00a8e8;
+                  padding: 6px 12px;
+                  font-size: 10px;
+                  letter-spacing: 0.08em;
+                  text-transform: uppercase;
+                  cursor: pointer;
+                "
+              >
+                Edit
+              </button>
+              <button
+                (click)="deleteTeam(team.id)"
+                style="
+                  background: none;
+                  border: 1px solid #ff6b6b;
+                  color: #ff6b6b;
+                  padding: 6px 10px;
+                  font-size: 10px;
+                  letter-spacing: 0.08em;
+                  text-transform: uppercase;
+                  cursor: pointer;
+                "
+              >
+                Delete
+              </button>
+            </div>
+          </article>
+        </div>
+
+        <!-- Edit Team Panel -->
+        <div
+          *ngIf="editingTeam"
+          style="
+            background-color: #0a0a0a;
+            border: 1px solid rgba(240, 240, 240, 0.12);
+            padding: 24px;
+            margin-top: 16px;
+          "
+        >
+          <h3
+            style="
+              font-size: 14px;
+              font-weight: 500;
+              color: #f0f0f0;
+              letter-spacing: 0.1em;
+              text-transform: uppercase;
+              margin-bottom: 16px;
+              font-family: 'Space Grotesk', sans-serif;
+            "
+          >
+            Edit Team: {{ editingTeam.nom }}
+          </h3>
+          <div style="display: flex; flex-direction: column; gap: 14px">
+            <input
+              name="editTeamName"
+              [(ngModel)]="editTeamForm.nom"
+              required
+              placeholder="Team name"
+              style="
+                background-color: #111114;
+                color: #f0f0f0;
+                border: 1px solid rgba(240, 240, 240, 0.12);
+                padding: 10px;
+              "
+            />
+
+            <select
+              name="editTeamSpeciality"
+              [(ngModel)]="editTeamForm.specialite"
+              required
+              style="
+                background-color: #111114;
+                color: #f0f0f0;
+                border: 1px solid rgba(240, 240, 240, 0.12);
+                padding: 10px;
+              "
+            >
+              <option *ngFor="let spec of specialties" [value]="spec">{{ spec }}</option>
+            </select>
+
+            <select
+              name="editLeaderEngineer"
+              [(ngModel)]="editTeamForm.leaderEngineerId"
+              required
+              style="
+                background-color: #111114;
+                color: #f0f0f0;
+                border: 1px solid rgba(240, 240, 240, 0.12);
+                padding: 10px;
+              "
+            >
+              <option value="">Leader engineer/manager</option>
+              <option *ngFor="let leader of leaderCandidates" [value]="leader.id">
+                {{ userLabel(leader) }}
+              </option>
+            </select>
+            <div
+              style="
+                min-height: 120px;
+                max-height: 180px;
+                overflow-y: auto;
+                background-color: #111114;
+                border: 1px solid rgba(240, 240, 240, 0.12);
+                padding: 6px;
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+              "
+            >
+              <div
+                *ngIf="technicianCandidates.length === 0"
+                style="color: #8a8a93; font-size: 11px; padding: 4px"
+              >
+                No members available
+              </div>
+              <div
+                *ngFor="let technician of technicianCandidates"
+                (click)="toggleEditTechnician(technician.id)"
+                [style.background-color]="
+                  editTeamForm.technicianIds.includes(technician.id)
+                    ? 'rgba(0,168,232,0.15)'
+                    : 'transparent'
+                "
+                [style.color]="
+                  editTeamForm.technicianIds.includes(technician.id) ? '#00A8E8' : '#F0F0F0'
+                "
+                [style.border]="
+                  editTeamForm.technicianIds.includes(technician.id)
+                    ? '1px solid rgba(0,168,232,0.3)'
+                    : '1px solid transparent'
+                "
+                style="
+                  padding: 6px 10px;
+                  cursor: pointer;
+                  border-radius: 4px;
+                  font-size: 12px;
+                  transition: all 0.2s;
+                  user-select: none;
+                "
+              >
+                {{ userLabel(technician) }}
+              </div>
+            </div>
+
+            <div
+              style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: -6px; margin-bottom: 8px"
+            >
+              <div
+                *ngFor="let tech of getEditSelectedTechniciansList(); trackBy: trackById"
+                (click)="removeEditSelectedTechnician(tech.id)"
+                style="
+                  background-color: rgba(0, 168, 232, 0.1);
+                  border: 1px solid #00a8e8;
+                  color: #00a8e8;
+                  padding: 4px 10px;
+                  font-size: 10px;
+                  border-radius: 12px;
+                  cursor: pointer;
+                  display: flex;
+                  align-items: center;
+                  gap: 6px;
+                "
+                title="Click to remove"
+              >
+                {{ userLabel(tech) }} <span style="font-weight: bold">×</span>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 12px; justify-content: flex-end">
+              <button
+                (click)="closeEditTeam()"
+                style="
+                  background: none;
+                  border: 1px solid rgba(240, 240, 240, 0.12);
+                  color: #8a8a93;
+                  padding: 10px 20px;
+                  font-size: 11px;
+                  text-transform: uppercase;
+                  cursor: pointer;
+                "
+              >
+                Cancel
+              </button>
+              <button
+                (click)="saveTeam()"
+                style="
+                  background-color: #00a8e8;
+                  color: #0a0a0a;
+                  border: none;
+                  padding: 10px 24px;
+                  font-size: 11px;
+                  font-weight: 700;
+                  text-transform: uppercase;
+                  cursor: pointer;
+                "
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="activeTab === 'assignments'">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px">
+      <!-- Unassigned Tasks Column -->
+      <div
+        style="
+          background-color: #0a0a0a;
+          border: 1px solid rgba(240, 240, 240, 0.06);
+          padding: 24px;
+          min-height: 400px;
+        "
+      >
+        <h3
+          style="
+            font-size: 14px;
+            font-weight: 500;
+            color: #ff6b6b;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            font-family: 'Space Grotesk', sans-serif;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          Unassigned Tasks
+          <span
+            style="
+              background-color: rgba(255, 107, 107, 0.1);
+              padding: 2px 8px;
+              border-radius: 12px;
+              font-size: 11px;
+            "
+            >{{ unassignedTasks.length }}</span
+          >
+        </h3>
+
+        <div
+          *ngIf="unassignedTasks.length === 0"
+          style="
+            color: #8a8a93;
+            font-size: 13px;
+            font-style: italic;
+            text-align: center;
+            padding: 32px 0;
+          "
+        >
+          All tasks are currently assigned.
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 12px">
+          <div
+            *ngFor="let task of unassignedTasks"
+            style="
+              background-color: #111114;
+              border: 1px solid rgba(240, 240, 240, 0.08);
+              padding: 16px;
+              display: flex;
+              flex-direction: column;
+              gap: 12px;
+            "
+          >
+            <div>
+              <div style="font-size: 13px; font-weight: 500; color: #f0f0f0; margin-bottom: 4px">
+                {{ task.title }}
+              </div>
+              <div style="font-size: 11px; color: #8a8a93">
+                ID: #{{ task.id.substring(0, 8) }} | Priority: {{ task.priority }}
+              </div>
+            </div>
+            <div style="display: flex; gap: 8px">
+              <select
+                [(ngModel)]="task.tempEquipeId"
+                [ngModelOptions]="{ standalone: true }"
+                style="
+                  flex: 1;
+                  background-color: #0a0a0a;
+                  color: #f0f0f0;
+                  border: 1px solid rgba(240, 240, 240, 0.12);
+                  padding: 8px;
+                  font-size: 12px;
+                "
+              >
+                <option [ngValue]="undefined">Select a team...</option>
+                <option *ngFor="let team of teams" [value]="team.id">{{ team.nom }}</option>
+              </select>
+              <button
+                (click)="assignTaskToTeam(task.id, task.tempEquipeId)"
+                style="
+                  background-color: #00a8e8;
+                  color: #0a0a0a;
+                  border: none;
+                  padding: 8px 16px;
+                  font-size: 11px;
+                  font-weight: 700;
+                  text-transform: uppercase;
+                  cursor: pointer;
+                "
+              >
+                Assign
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Assigned Tasks Column -->
+      <div
+        style="
+          background-color: #0a0a0a;
+          border: 1px solid rgba(240, 240, 240, 0.06);
+          padding: 24px;
+          min-height: 400px;
+        "
+      >
+        <h3
+          style="
+            font-size: 14px;
+            font-weight: 500;
+            color: #00a8e8;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            font-family: 'Space Grotesk', sans-serif;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          Assigned Tasks
+          <span
+            style="
+              background-color: rgba(0, 168, 232, 0.1);
+              padding: 2px 8px;
+              border-radius: 12px;
+              font-size: 11px;
+            "
+            >{{ assignedTasks.length }}</span
+          >
+        </h3>
+
+        <div
+          *ngIf="assignedTasks.length === 0"
+          style="
+            color: #8a8a93;
+            font-size: 13px;
+            font-style: italic;
+            text-align: center;
+            padding: 32px 0;
+          "
+        >
+          No tasks have been assigned yet.
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 12px">
+          <div
+            *ngFor="let task of assignedTasks"
+            style="
+              background-color: #111114;
+              border: 1px solid rgba(0, 168, 232, 0.2);
+              border-left: 3px solid #00a8e8;
+              padding: 16px;
+              display: flex;
+              flex-direction: column;
+              gap: 12px;
+            "
+          >
+            <div style="display: flex; justify-content: space-between; align-items: flex-start">
+              <div>
+                <div style="font-size: 13px; font-weight: 500; color: #f0f0f0; margin-bottom: 4px">
+                  {{ task.title || task.description }}
+                </div>
+                <div style="font-size: 11px; color: #8a8a93">Team ID: {{ task.equipeId }}</div>
+              </div>
+              <button
+                (click)="unassignTaskFromTeam(task.id)"
+                style="
+                  background: none;
+                  border: 1px solid #ff6b6b;
+                  color: #ff6b6b;
+                  padding: 4px 8px;
+                  font-size: 10px;
+                  cursor: pointer;
+                  text-transform: uppercase;
+                "
+              >
+                Unassign
+              </button>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center">
+              <span style="font-size: 11px; color: #8a8a93; white-space: nowrap">Reassign:</span>
+              <select
+                [(ngModel)]="task.tempEquipeId"
+                [ngModelOptions]="{ standalone: true }"
+                style="
+                  flex: 1;
+                  background-color: #0a0a0a;
+                  color: #f0f0f0;
+                  border: 1px solid rgba(240, 240, 240, 0.12);
+                  padding: 8px;
+                  font-size: 12px;
+                "
+              >
+                <option [ngValue]="undefined">Select a team...</option>
+                <option *ngFor="let team of teams" [value]="team.id">{{ team.nom }}</option>
+              </select>
+              <button
+                (click)="assignTaskToTeam(task.id, task.tempEquipeId || task.equipeId)"
+                style="
+                  background-color: transparent;
+                  border: 1px solid #00a8e8;
+                  color: #00a8e8;
+                  padding: 8px 12px;
+                  font-size: 11px;
+                  font-weight: 700;
+                  text-transform: uppercase;
+                  cursor: pointer;
+                "
+              >
+                Change
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="activeTab === 'reports'">
+    <div
+      style="background-color: #0a0a0a; border: 1px solid rgba(240, 240, 240, 0.06); padding: 24px"
+    >
+      <h3
+        style="
+          font-size: 14px;
+          color: #f0f0f0;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          margin-bottom: 16px;
+        "
+      >
+        Assignment Rapports
+      </h3>
+      <div *ngIf="reports.length === 0" style="color: #8a8a93; font-size: 13px; padding: 24px 0">
+        No submitted assignment rapports.
+      </div>
+      <div
+        *ngFor="let report of reports"
+        style="border-bottom: 1px solid rgba(240, 240, 240, 0.06); padding: 16px 0"
+      >
+        <div style="display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap">
+          <div>
+            <h4 style="color: #f0f0f0; font-size: 15px; margin-bottom: 6px">{{ report.title }}</h4>
+            <p style="color: #8a8a93; font-size: 13px; max-width: 720px">{{ report.content }}</p>
+          </div>
+          <span
+            style="
+              color: #f28c28;
+              font-size: 11px;
+              letter-spacing: 0.08em;
+              text-transform: uppercase;
+            "
+            >{{ report.status }}</span
+          >
+        </div>
+        <div style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap">
+          <input
+            [(ngModel)]="reviewNotes[report.id]"
+            [name]="'review-' + report.id"
+            placeholder="Reviewer note"
+            style="
+              flex: 1;
+              min-width: 220px;
+              background-color: #111114;
+              color: #f0f0f0;
+              border: 1px solid rgba(240, 240, 240, 0.12);
+              padding: 9px;
+            "
+          />
+          <button
+            (click)="reviewReport(report, 'APPROVED')"
+            style="
+              background: none;
+              border: 1px solid #00a8e8;
+              color: #00a8e8;
+              padding: 8px 12px;
+              font-size: 10px;
+              letter-spacing: 0.08em;
+              text-transform: uppercase;
+              cursor: pointer;
+            "
+          >
+            Approve
+          </button>
+          <button
+            (click)="reviewReport(report, 'MODIFICATION_REQUESTED')"
+            style="
+              background: none;
+              border: 1px solid #f28c28;
+              color: #f28c28;
+              padding: 8px 12px;
+              font-size: 10px;
+              letter-spacing: 0.08em;
+              text-transform: uppercase;
+              cursor: pointer;
+            "
+          >
+            Modify
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="activeTab === 'team'">
+    <div
+      style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px"
+    >
+      <div
+        *ngFor="let team of dynamicTeamPerformance"
+        style="
+          background-color: #0a0a0a;
+          border: 1px solid rgba(240, 240, 240, 0.06);
+          padding: 24px;
+        "
+      >
+        <h3
+          style="
+            font-size: 16px;
+            font-weight: 500;
+            color: #f0f0f0;
+            font-family: 'Space Grotesk', sans-serif;
+            margin-bottom: 4px;
+          "
+        >
+          {{ team.name }}
+        </h3>
+        <p
+          style="
+            font-size: 11px;
+            color: #8a8a93;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+          "
+        >
+          {{ team.specialite }}
+        </p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px">
+          <div>
+            <div
+              style="
+                font-size: 20px;
+                font-weight: 700;
+                color: #00a8e8;
+                font-family: 'Space Grotesk', sans-serif;
+              "
+            >
+              {{ team.assigned }}
+            </div>
+            <div
+              style="
+                font-size: 10px;
+                color: #8a8a93;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+              "
+            >
+              Jobs Assigned
+            </div>
+          </div>
+          <div>
+            <div
+              style="
+                font-size: 20px;
+                font-weight: 700;
+                color: #00a8e8;
+                font-family: 'Space Grotesk', sans-serif;
+              "
+            >
+              {{ team.completed }}
+            </div>
+            <div
+              style="
+                font-size: 10px;
+                color: #8a8a93;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+              "
+            >
+              Jobs Done
+            </div>
+          </div>
+          <div>
+            <div
+              style="
+                font-size: 20px;
+                font-weight: 700;
+                color: #ff6b6b;
+                font-family: 'Space Grotesk', sans-serif;
+              "
+            >
+              {{ team.left }}
+            </div>
+            <div
+              style="
+                font-size: 10px;
+                color: #8a8a93;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+              "
+            >
+              Tasks Left
+            </div>
+          </div>
+          <div>
+            <div
+              style="
+                font-size: 20px;
+                font-weight: 700;
+                color: #f28c28;
+                font-family: 'Space Grotesk', sans-serif;
+              "
+            >
+              {{ team.efficiency }}%
+            </div>
+            <div
+              style="
+                font-size: 10px;
+                color: #8a8a93;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+              "
+            >
+              Efficiency
+            </div>
+          </div>
+        </div>
+        <div
+          style="
+            width: 100%;
+            height: 4px;
+            background-color: rgba(240, 240, 240, 0.06);
+            border-radius: 2px;
+            overflow: hidden;
+          "
+        >
+          <div
+            [style.width.%]="team.efficiency"
+            [style.background-color]="team.efficiency > 90 ? '#00A8E8' : '#F28C28'"
+            style="height: 100%; transition: width 0.5s ease"
+          ></div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="activeTab === 'costs'">
+    <div
+      style="background-color: #0a0a0a; border: 1px solid rgba(240, 240, 240, 0.06); padding: 24px"
+    >
+      <h3
+        style="
+          font-size: 14px;
+          font-weight: 500;
+          color: #f0f0f0;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          margin-bottom: 20px;
+          font-family: 'Space Grotesk', sans-serif;
+        "
+      >
+        Maintenance Cost Breakdown
+      </h3>
+      <div
+        style="
+          width: 100%;
+          height: 400px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: rgba(240, 240, 240, 0.02);
+          color: #8a8a93;
+          font-size: 12px;
+          font-family: 'Inter', sans-serif;
+          border: 1px dashed rgba(240, 240, 240, 0.1);
+        "
+      >
+        [Bar Chart Placeholder]
+      </div>
+      <div style="display: flex; justify-content: center; gap: 24px; margin-top: 16px">
+        <div style="display: flex; align-items: center; gap: 8px">
+          <div style="width: 12px; height: 12px; background-color: #00a8e8"></div>
+          <span style="font-size: 12px; color: #8a8a93">Scheduled Maintenance</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px">
+          <div style="width: 12px; height: 12px; background-color: #f28c28"></div>
+          <span style="font-size: 12px; color: #8a8a93">Unscheduled / Breakdown</span>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="activeTab === 'engines' && auth.hasRole(['admin'])">
+    <div
+      style="
+        display: grid;
+        grid-template-columns: minmax(280px, 420px) 1fr;
+        gap: 24px;
+        font-family: 'Inter', sans-serif;
+      "
+    >
+      <!-- Create Engine and Taxonomy Forms -->
+      <div style="display: flex; flex-direction: column; gap: 24px">
+        <!-- Add Engine Form -->
+        <form
+          (ngSubmit)="createEngine()"
+          style="
+            background-color: #0a0a0a;
+            border: 1px solid rgba(240, 240, 240, 0.06);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+          "
+        >
+          <h3
+            style="
+              font-size: 14px;
+              font-weight: 500;
+              color: #f0f0f0;
+              letter-spacing: 0.1em;
+              text-transform: uppercase;
+              font-family: 'Space Grotesk', sans-serif;
+              margin-bottom: 6px;
+            "
+          >
+            Add New Engine
+          </h3>
+          <input
+            name="engineName"
+            [(ngModel)]="engineForm.nom"
+            required
+            placeholder="Engine name (e.g. Turbine GP-7200)"
+            style="
+              background-color: #111114;
+              color: #f0f0f0;
+              border: 1px solid rgba(240, 240, 240, 0.12);
+              padding: 10px;
+            "
+          />
+          <input
+            name="engineReference"
+            [(ngModel)]="engineForm.reference"
+            required
+            placeholder="Unique reference code"
+            style="
+              background-color: #111114;
+              color: #f0f0f0;
+              border: 1px solid rgba(240, 240, 240, 0.12);
+              padding: 10px;
+            "
+          />
+          <input
+            name="engineModel"
+            [(ngModel)]="engineForm.model"
+            required
+            placeholder="Aircraft model"
+            style="
+              background-color: #111114;
+              color: #f0f0f0;
+              border: 1px solid rgba(240, 240, 240, 0.12);
+              padding: 10px;
+            "
+          />
+
+          <select
+            name="engineTaxonomy"
+            [(ngModel)]="engineForm.taxonomieId"
+            required
+            style="
+              background-color: #111114;
+              color: #f0f0f0;
+              border: 1px solid rgba(240, 240, 240, 0.12);
+              padding: 10px;
+            "
+          >
+            <option value="">Select taxonomy category...</option>
+            <option *ngFor="let tax of taxonomies" [value]="tax.id">
+              {{ tax.nom }} ({{ tax.code }})
+            </option>
+          </select>
+
+          <button
+            type="submit"
+            style="
+              background-color: #00a8e8;
+              color: #0a0a0a;
+              border: none;
+              padding: 12px;
+              font-size: 11px;
+              letter-spacing: 0.1em;
+              text-transform: uppercase;
+              font-weight: 700;
+              cursor: pointer;
+              font-family: 'Space Grotesk', sans-serif;
+            "
+          >
+            Register Engine
+          </button>
+        </form>
+
+        <!-- Add Taxonomy Category Form -->
+        <div
+          style="
+            background-color: #0a0a0a;
+            border: 1px solid rgba(240, 240, 240, 0.06);
+            padding: 24px;
+          "
+        >
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 12px;
+            "
+          >
+            <h3
+              style="
+                font-size: 13px;
+                font-weight: 500;
+                color: #f0f0f0;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                font-family: 'Space Grotesk', sans-serif;
+                margin: 0;
+              "
+            >
+              Taxonomy Categories
+            </h3>
+            <button
+              (click)="showCreateTaxonomy = !showCreateTaxonomy"
+              style="
+                background: none;
+                border: 1px solid rgba(242, 140, 40, 0.4);
+                color: #f28c28;
+                padding: 4px 10px;
+                font-size: 10px;
+                cursor: pointer;
+                text-transform: uppercase;
+              "
+            >
+              {{ showCreateTaxonomy ? 'Close' : '+ New' }}
+            </button>
+          </div>
+
+          <form
+            *ngIf="showCreateTaxonomy"
+            (ngSubmit)="createTaxonomy()"
+            style="display: flex; flex-direction: column; gap: 12px; margin-top: 14px"
+          >
+            <input
+              name="taxCode"
+              [(ngModel)]="taxonomyForm.code"
+              required
+              placeholder="Category code (e.g. ENG)"
+              style="
+                background-color: #111114;
+                color: #f0f0f0;
+                border: 1px solid rgba(240, 240, 240, 0.12);
+                padding: 10px;
+                font-size: 12px;
+              "
+            />
+            <input
+              name="taxNom"
+              [(ngModel)]="taxonomyForm.nom"
+              required
+              placeholder="Category name (e.g. Engine Components)"
+              style="
+                background-color: #111114;
+                color: #f0f0f0;
+                border: 1px solid rgba(240, 240, 240, 0.12);
+                padding: 10px;
+                font-size: 12px;
+              "
+            />
+            <input
+              name="taxDesc"
+              [(ngModel)]="taxonomyForm.description"
+              placeholder="Description"
+              style="
+                background-color: #111114;
+                color: #f0f0f0;
+                border: 1px solid rgba(240, 240, 240, 0.12);
+                padding: 10px;
+                font-size: 12px;
+              "
+            />
+            <button
+              type="submit"
+              style="
+                background-color: #f28c28;
+                color: #0a0a0a;
+                border: none;
+                padding: 10px;
+                font-size: 11px;
+                font-weight: 700;
+                text-transform: uppercase;
+                cursor: pointer;
+              "
+            >
+              Add Category
+            </button>
+          </form>
+
+          <div
+            style="
+              margin-top: 16px;
+              display: flex;
+              flex-direction: column;
+              gap: 8px;
+              max-height: 200px;
+              overflow-y: auto;
+            "
+          >
+            <div
+              *ngFor="let tax of taxonomies"
+              style="
+                border-bottom: 1px solid rgba(240, 240, 240, 0.04);
+                padding-bottom: 6px;
+                font-size: 12px;
+                display: flex;
+                justify-content: space-between;
+              "
+            >
+              <span style="color: #f0f0f0; font-weight: 500">{{ tax.nom }}</span>
+              <span style="color: #00a8e8; font-family: monospace">{{ tax.code }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Engine Directory Catalog -->
+      <div
+        style="
+          background-color: #0a0a0a;
+          border: 1px solid rgba(240, 240, 240, 0.06);
+          padding: 24px;
+        "
+      >
+        <h3
+          style="
+            font-size: 14px;
+            color: #f0f0f0;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            font-family: 'Space Grotesk', sans-serif;
+          "
+        >
+          Registered Engines Catalog
+        </h3>
+        <div style="overflow-x: auto">
+          <table
+            style="
+              width: 100%;
+              border-collapse: collapse;
+              text-align: left;
+              font-size: 13px;
+              color: #f0f0f0;
+            "
+          >
+            <thead>
+              <tr
+                style="
+                  border-bottom: 1px solid rgba(240, 240, 240, 0.08);
+                  color: #8a8a93;
+                  font-family: 'Space Grotesk', sans-serif;
+                  font-size: 11px;
+                  text-transform: uppercase;
+                  letter-spacing: 0.05em;
+                "
+              >
+                <th style="padding: 12px 8px">Name</th>
+                <th style="padding: 12px 8px">Reference</th>
+                <th style="padding: 12px 8px">Model</th>
+                <th style="padding: 12px 8px">Taxonomy</th>
+                <th style="padding: 12px 8px">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngIf="equipements.length === 0">
+                <td colspan="5" style="padding: 16px 8px; color: #8a8a93; text-align: center">
+                  No engines registered in the catalog yet.
+                </td>
+              </tr>
+              <tr
+                *ngFor="let eq of equipements"
+                style="border-bottom: 1px solid rgba(240, 240, 240, 0.04)"
+              >
+                <td style="padding: 12px 8px; font-weight: 500; color: #f0f0f0">{{ eq.nom }}</td>
+                <td style="padding: 12px 8px; font-family: monospace; color: #8a8a93">
+                  {{ eq.reference }}
+                </td>
+                <td style="padding: 12px 8px; color: #f0f0f0">{{ eq.model }}</td>
+                <td style="padding: 12px 8px; color: #00a8e8; font-size: 12px">
+                  {{ eq.taxonomie?.nom }} ({{ eq.taxonomie?.code }})
+                </td>
+                <td style="padding: 12px 8px">
+                  <span
+                    style="
+                      color: #00a8e8;
+                      font-size: 11px;
+                      font-weight: 700;
+                      text-transform: uppercase;
+                      letter-spacing: 0.05em;
+                    "
+                  >
+                    {{ eq.status || 'En service' }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="activeTab === 'accounts'">
+    <div
+      style="
+        background-color: #0a0a0a;
+        border: 1px solid rgba(240, 240, 240, 0.06);
+        padding: 24px;
+        font-family: 'Inter', sans-serif;
+      "
+    >
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 24px;
+        "
+      >
+        <h3
+          style="
+            font-size: 14px;
+            font-weight: 500;
+            color: #f0f0f0;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-family: 'Space Grotesk', sans-serif;
+            margin: 0;
+          "
+        >
+          Account Management
+        </h3>
+        <button
+          (click)="openCreateUserModal()"
+          style="
+            background-color: #00a8e8;
+            color: #0a0a0a;
+            border: none;
+            padding: 10px 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: 0.05em;
+          "
+        >
+          + Create Account
+        </button>
+      </div>
+
+      <!-- Pending Registration Requests -->
+      <div style="margin-bottom: 32px">
+        <h4
+          style="
+            font-size: 11px;
+            color: #f28c28;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-family: 'Space Grotesk', sans-serif;
+            margin-bottom: 12px;
+          "
+        >
+          Pending Registration Requests
+        </h4>
+        <div style="overflow-x: auto">
+          <table
+            style="
+              width: 100%;
+              border-collapse: collapse;
+              text-align: left;
+              font-size: 12px;
+              color: #f0f0f0;
+            "
+          >
+            <thead>
+              <tr style="border-bottom: 1px solid rgba(240, 240, 240, 0.08); color: #8a8a93">
+                <th style="padding: 12px 8px">Name</th>
+                <th style="padding: 12px 8px">Email</th>
+                <th style="padding: 12px 8px">Role</th>
+                <th style="padding: 12px 8px; text-align: right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngIf="pendingUsers.length === 0">
+                <td colspan="4" style="padding: 16px 8px; color: #8a8a93">
+                  No pending registration requests.
+                </td>
+              </tr>
+              <tr
+                *ngFor="let user of pendingUsers"
+                style="border-bottom: 1px solid rgba(240, 240, 240, 0.04)"
+              >
+                <td style="padding: 12px 8px; font-weight: 500">
+                  {{ user.prenom }} {{ user.nom }}
+                </td>
+                <td style="padding: 12px 8px; color: #8a8a93">{{ user.email }}</td>
+                <td
+                  style="
+                    padding: 12px 8px;
+                    text-transform: uppercase;
+                    font-size: 11px;
+                    color: #00a8e8;
+                  "
+                >
+                  {{ user.role }}
+                </td>
+                <td
+                  style="
+                    padding: 12px 8px;
+                    text-align: right;
+                    display: flex;
+                    gap: 8px;
+                    justify-content: flex-end;
+                  "
+                >
+                  <button
+                    (click)="approveUser(user)"
+                    style="
+                      background-color: #00a8e8;
+                      color: #0a0a0a;
+                      border: none;
+                      padding: 6px 12px;
+                      font-size: 10px;
+                      font-weight: 700;
+                      cursor: pointer;
+                      text-transform: uppercase;
+                      font-family: 'Space Grotesk', sans-serif;
+                    "
+                  >
+                    Approve
+                  </button>
+                  <button
+                    (click)="deleteUserAccount(user.id)"
+                    style="
+                      background: none;
+                      border: 1px solid #ff6b6b;
+                      color: #ff6b6b;
+                      padding: 6px 12px;
+                      font-size: 10px;
+                      cursor: pointer;
+                      text-transform: uppercase;
+                      font-family: 'Space Grotesk', sans-serif;
+                    "
+                  >
+                    Reject
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- All User Accounts -->
+      <div>
+        <h4
+          style="
+            font-size: 11px;
+            color: #8a8a93;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-family: 'Space Grotesk', sans-serif;
+            margin-bottom: 12px;
+          "
+        >
+          All Registered Accounts
+        </h4>
+        <div style="overflow-x: auto">
+          <table
+            style="
+              width: 100%;
+              border-collapse: collapse;
+              text-align: left;
+              font-size: 12px;
+              color: #f0f0f0;
+            "
+          >
+            <thead>
+              <tr style="border-bottom: 1px solid rgba(240, 240, 240, 0.08); color: #8a8a93">
+                <th style="padding: 12px 8px">Name</th>
+                <th style="padding: 12px 8px">Email</th>
+                <th style="padding: 12px 8px">Role</th>
+                <th style="padding: 12px 8px">Status</th>
+                <th style="padding: 12px 8px; text-align: right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let user of users"
+                style="border-bottom: 1px solid rgba(240, 240, 240, 0.04)"
+              >
+                <td style="padding: 12px 8px; font-weight: 500">
+                  {{ user.prenom }} {{ user.nom }}
+                </td>
+                <td style="padding: 12px 8px; color: #8a8a93">{{ user.email }}</td>
+                <td style="padding: 12px 8px; text-transform: uppercase; font-size: 11px">
+                  {{ user.role }}
+                </td>
+                <td style="padding: 12px 8px">
+                  <span
+                    [style.color]="
+                      user.accountStatus === 'SUSPENDED'
+                        ? '#ff6b6b'
+                        : user.accountStatus === 'APPROVED'
+                          ? '#00A8E8'
+                          : '#F28C28'
+                    "
+                    style="
+                      font-size: 10px;
+                      font-weight: 700;
+                      text-transform: uppercase;
+                      letter-spacing: 0.05em;
+                    "
+                  >
+                    {{ user.accountStatus || 'APPROVED' }}
+                  </span>
+                </td>
+                <td
+                  style="
+                    padding: 12px 8px;
+                    text-align: right;
+                    display: flex;
+                    gap: 8px;
+                    justify-content: flex-end;
+                  "
+                >
+                  <button
+                    (click)="openEditUserModal(user)"
+                    style="
+                      background: none;
+                      border: 1px solid rgba(240, 240, 240, 0.12);
+                      color: #f0f0f0;
+                      padding: 6px 12px;
+                      font-size: 10px;
+                      cursor: pointer;
+                      text-transform: uppercase;
+                      font-family: 'Space Grotesk', sans-serif;
+                    "
+                  >
+                    Edit
+                  </button>
+                  <button
+                    *ngIf="user.accountStatus !== 'SUSPENDED'"
+                    (click)="suspendUser(user)"
+                    style="
+                      background: none;
+                      border: 1px solid #f28c28;
+                      color: #f28c28;
+                      padding: 6px 12px;
+                      font-size: 10px;
+                      cursor: pointer;
+                      text-transform: uppercase;
+                      font-family: 'Space Grotesk', sans-serif;
+                    "
+                  >
+                    Suspend
+                  </button>
+                  <button
+                    *ngIf="user.accountStatus === 'SUSPENDED'"
+                    (click)="unsuspendUser(user)"
+                    style="
+                      background: none;
+                      border: 1px solid #00a8e8;
+                      color: #00a8e8;
+                      padding: 6px 12px;
+                      font-size: 10px;
+                      cursor: pointer;
+                      text-transform: uppercase;
+                      font-family: 'Space Grotesk', sans-serif;
+                    "
+                  >
+                    Unsuspend
+                  </button>
+                  <button
+                    (click)="deleteUserAccount(user.id)"
+                    style="
+                      background: none;
+                      border: 1px solid #ff6b6b;
+                      color: #ff6b6b;
+                      padding: 6px 12px;
+                      font-size: 10px;
+                      cursor: pointer;
+                      text-transform: uppercase;
+                      font-family: 'Space Grotesk', sans-serif;
+                    "
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="activeTab === 'feedbacks'">
+    <div
+      style="
+        background-color: #0a0a0a;
+        border: 1px solid rgba(240, 240, 240, 0.06);
+        padding: 24px;
+        font-family: 'Inter', sans-serif;
+      "
+    >
+      <h3
+        style="
+          font-size: 14px;
+          font-weight: 500;
+          color: #f0f0f0;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          font-family: 'Space Grotesk', sans-serif;
+          margin-bottom: 20px;
+        "
+      >
+        User Bug Feedbacks
+      </h3>
+      <div style="overflow-x: auto">
+        <table
+          style="
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 12px;
+            color: #f0f0f0;
+          "
+        >
+          <thead>
+            <tr style="border-bottom: 1px solid rgba(240, 240, 240, 0.08); color: #8a8a93">
+              <th style="padding: 12px 8px; width: 160px">Reporter</th>
+              <th style="padding: 12px 8px; width: 120px">Role</th>
+              <th style="padding: 12px 8px">Description</th>
+              <th style="padding: 12px 8px; width: 160px">Date Reported</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="bugFeedbacks.length === 0">
+              <td colspan="4" style="padding: 16px 8px; color: #8a8a93; text-align: center">
+                No bug reports submitted.
+              </td>
+            </tr>
+            <tr
+              *ngFor="let bug of bugFeedbacks"
+              style="border-bottom: 1px solid rgba(240, 240, 240, 0.04)"
+            >
+              <td style="padding: 12px 8px; font-weight: 500; word-break: break-all">
+                {{ bug.reporterEmail }}
+              </td>
+              <td
+                style="
+                  padding: 12px 8px;
+                  text-transform: uppercase;
+                  font-size: 11px;
+                  color: #f28c28;
+                "
+              >
+                {{ bug.reporterRole }}
+              </td>
+              <td style="padding: 12px 8px; color: #e0e0e0; line-height: 1.4">
+                {{ bug.description }}
+              </td>
+              <td style="padding: 12px 8px; color: #8a8a93">{{ bug.createdAt | date: 'short' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Create/Edit User Modal -->
+  <div
+    *ngIf="createUserModalOpen"
+    style="
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      backdrop-filter: blur(4px);
+    "
+  >
+    <div
+      style="
+        width: 440px;
+        background-color: #0a0a0a;
+        border: 1px solid rgba(240, 240, 240, 0.12);
+        padding: 24px;
+        position: relative;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      "
+    >
+      <h3
+        style="
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 14px;
+          text-transform: uppercase;
+          letter-spacing: 0.15em;
+          color: #f0f0f0;
+          margin-top: 0;
+          margin-bottom: 20px;
+          border-bottom: 1px solid rgba(240, 240, 240, 0.06);
+          padding-bottom: 12px;
+        "
+      >
+        {{ editingUser ? 'Edit User Account' : 'Create User Account' }}
+      </h3>
+
+      <div
+        style="display: flex; flex-direction: column; gap: 14px; font-family: 'Inter', sans-serif"
+      >
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label
+              style="
+                font-size: 10px;
+                color: #8a8a93;
+                font-family: 'Space Grotesk', sans-serif;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+              "
+              >First Name</label
+            >
+            <input
+              [(ngModel)]="userForm.prenom"
+              placeholder="John"
+              style="
+                background-color: #111114;
+                border: 1px solid rgba(240, 240, 240, 0.12);
+                padding: 10px;
+                color: #f0f0f0;
+                font-size: 12px;
+              "
+            />
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label
+              style="
+                font-size: 10px;
+                color: #8a8a93;
+                font-family: 'Space Grotesk', sans-serif;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+              "
+              >Last Name</label
+            >
+            <input
+              [(ngModel)]="userForm.nom"
+              placeholder="Doe"
+              style="
+                background-color: #111114;
+                border: 1px solid rgba(240, 240, 240, 0.12);
+                padding: 10px;
+                color: #f0f0f0;
+                font-size: 12px;
+              "
+            />
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <label
+            style="
+              font-size: 10px;
+              color: #8a8a93;
+              font-family: 'Space Grotesk', sans-serif;
+              text-transform: uppercase;
+              letter-spacing: 0.05em;
+            "
+            >Email</label
+          >
+          <input
+            [(ngModel)]="userForm.email"
+            placeholder="john.doe@test.com"
+            style="
+              background-color: #111114;
+              border: 1px solid rgba(240, 240, 240, 0.12);
+              padding: 10px;
+              color: #f0f0f0;
+              font-size: 12px;
+            "
+          />
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <label
+            style="
+              font-size: 10px;
+              color: #8a8a93;
+              font-family: 'Space Grotesk', sans-serif;
+              text-transform: uppercase;
+              letter-spacing: 0.05em;
+            "
+            >Password {{ editingUser ? '(Optional)' : '' }}</label
+          >
+          <input
+            [(ngModel)]="userForm.motDePasse"
+            type="password"
+            placeholder="••••••••"
+            style="
+              background-color: #111114;
+              border: 1px solid rgba(240, 240, 240, 0.12);
+              padding: 10px;
+              color: #f0f0f0;
+              font-size: 12px;
+            "
+          />
+        </div>
+
+        <div *ngIf="!editingUser" style="display: flex; flex-direction: column; gap: 6px">
+          <label
+            style="
+              font-size: 10px;
+              color: #8a8a93;
+              font-family: 'Space Grotesk', sans-serif;
+              text-transform: uppercase;
+              letter-spacing: 0.05em;
+            "
+            >Role</label
+          >
+          <select
+            [(ngModel)]="userForm.role"
+            style="
+              background-color: #111114;
+              border: 1px solid rgba(240, 240, 240, 0.12);
+              padding: 10px;
+              color: #f0f0f0;
+              font-size: 12px;
+            "
+          >
+            <option value="ADMIN">ADMIN</option>
+            <option value="MANAGER">MANAGER</option>
+            <option value="INGENIEUR">ENGINEER</option>
+            <option value="OPERATEUR">TECHNICIAN</option>
+          </select>
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 14px">
+          <button
+            (click)="closeUserModal()"
+            style="
+              background: none;
+              border: 1px solid rgba(240, 240, 240, 0.12);
+              color: #8a8a93;
+              padding: 8px 16px;
+              font-size: 10px;
+              text-transform: uppercase;
+              cursor: pointer;
+              font-family: 'Space Grotesk', sans-serif;
+              letter-spacing: 0.05em;
+            "
+          >
+            Cancel
+          </button>
+          <button
+            (click)="saveUser()"
+            style="
+              background-color: #00a8e8;
+              color: #0a0a0a;
+              border: none;
+              padding: 8px 20px;
+              font-size: 10px;
+              text-transform: uppercase;
+              font-weight: 700;
+              cursor: pointer;
+              font-family: 'Space Grotesk', sans-serif;
+              letter-spacing: 0.05em;
+            "
+          >
+            Save User
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
