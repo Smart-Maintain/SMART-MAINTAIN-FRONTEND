@@ -71,7 +71,6 @@ export class Engineer implements OnInit {
     // Load Equipements (Engines)
     this.dataService.getEquipements().subscribe({
       next: (eqs) => {
-        console.log('Fetched equipments:', eqs);
         this.engines = eqs.map((e) => ({
           id: e.id,
           name: `${e.nom} - ${e.model} (${e.reference})`,
@@ -96,7 +95,6 @@ export class Engineer implements OnInit {
     // Load Tasks
     this.dataService.getTasks().subscribe({
       next: (tasks) => {
-        console.log('Fetched tasks:', tasks);
         this.myTasks = tasks.map((t) => ({
           id: t.id,
           title: t.description || 'Unknown Task',

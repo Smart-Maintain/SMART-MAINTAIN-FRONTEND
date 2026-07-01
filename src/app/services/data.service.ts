@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { getApiBaseUrl } from '../utils/api.config';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { RoleUtil } from '../utils/role.util';
@@ -7,8 +8,8 @@ import { RoleUtil } from '../utils/role.util';
   providedIn: 'root'
 })
 export class DataService {
-  private equipmentApi = 'http://localhost:8888/api/equipement-service';
-  private identityApi = 'http://localhost:8888/api/identity-service';
+  private equipmentApi = `${getApiBaseUrl()}/api/equipement-service`;
+  private identityApi = `${getApiBaseUrl()}/api/identity-service`;
 
   constructor(private http: HttpClient) { }
 

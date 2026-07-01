@@ -1,4 +1,4 @@
-<div style="padding: 24px">
+<div class="page-container">
   <div style="margin-bottom: 32px">
     <h1
       style="
@@ -17,14 +17,7 @@
     </p>
   </div>
 
-  <div
-    style="
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(min(100%, 500px), 1fr));
-      gap: 24px;
-      margin-bottom: 32px;
-    "
-  >
+  <div class="grid-2">
     <!-- Task Creation Form -->
     <div
       style="background-color: #0a0a0a; border: 1px solid rgba(240, 240, 240, 0.06); padding: 24px"
@@ -362,15 +355,7 @@
     <!-- Summary + Chart -->
     <div style="display: flex; flex-direction: column; gap: 24px">
       <!-- My Task Summary -->
-      <div
-        style="
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 2px;
-          background-color: rgba(240, 240, 240, 0.06);
-          border: 1px solid rgba(240, 240, 240, 0.06);
-        "
-      >
+      <div class="kpi-row">
         <div style="background-color: #0a0a0a; padding: 20px">
           <span
             style="
@@ -462,14 +447,7 @@
   </div>
 
   <!-- Rapport Workflow -->
-  <div
-    style="
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
-      gap: 24px;
-      margin-bottom: 32px;
-    "
-  >
+  <div class="grid-reports">
     <div
       style="background-color: #0a0a0a; border: 1px solid rgba(240, 240, 240, 0.06); padding: 24px"
     >
@@ -687,15 +665,7 @@
         <!-- Header / Summary Row -->
         <div
           (click)="toggleTask(task.id)"
-          style="
-            padding: 16px 20px;
-            display: grid;
-            grid-template-columns: 80px 2fr 1fr 1fr 100px 40px;
-            align-items: center;
-            gap: 16px;
-            cursor: pointer;
-            background-color: #111114;
-          "
+          class="task-row"
           [style.border-left]="
             expandedTaskId === task.id ? '3px solid #00A8E8' : '3px solid transparent'
           "
@@ -783,7 +753,7 @@
             background-color: #0a0a0a;
           "
         >
-          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px">
+          <div class="task-details">
             <div>
               <div>
                 <h4
@@ -844,20 +814,11 @@
                   </div>
 
                   <!-- Inline new subtask form -->
-                  <div
-                    *ngIf="isLeaderOrAdmin() && newSubTaskForms[task.id]?.open"
-                    style="
-                      display: flex;
-                      gap: 8px;
-                      margin-bottom: 12px;
-                      flex-wrap: wrap;
-                      align-items: flex-end;
-                      background: #111114;
-                      padding: 12px;
-                      border: 1px dashed rgba(0, 168, 232, 0.3);
-                      border-radius: 4px;
-                    "
-                  >
+                <div
+                  *ngIf="isLeaderOrAdmin() && newSubTaskForms[task.id]?.open"
+                  class="subtask-form"
+                >
+                  <div class="subtask-form-input">
                     <div style="flex: 2; min-width: 180px;">
                       <label style="font-size: 10px; color: #8a8a93; text-transform: uppercase; display: block; margin-bottom: 4px; font-family: 'Space Grotesk', sans-serif;">Description</label>
                       <input
@@ -873,9 +834,9 @@
                           font-family: 'Inter', sans-serif;
                         "
                       />
-                    </div>
-                    <div style="flex: 1; min-width: 160px;">
-                      <label style="font-size: 10px; color: #8a8a93; text-transform: uppercase; display: block; margin-bottom: 4px; font-family: 'Space Grotesk', sans-serif;">Assign To</label>
+                  </div>
+                  <div class="subtask-form-select">
+                    <label style="font-size: 10px; color: #8a8a93; text-transform: uppercase; display: block; margin-bottom: 4px; font-family: 'Space Grotesk', sans-serif;">Assign To</label>
                       <select
                         [(ngModel)]="newSubTaskForms[task.id].assignedMemberId"
                         (ngModelChange)="onSubTaskAssignChange(task.id, task)"

@@ -157,32 +157,32 @@ export class Dashboard implements OnInit {
     if (role === 'admin') {
       this.navCache = [
         { path: '/admin/dashboard', label: 'Admin Control', icon: '◆' },
-        { path: '/admin/stock', label: 'Gestion Stock', icon: '📦' },
-        { path: '/admin/predictions', label: 'Predictions', icon: '🔔' },
+        { path: '/admin/stock', label: 'Gestion Stock', icon: '▣' },
+        { path: '/admin/predictions', label: 'Predictions', icon: '◬' },
         { path: '/admin/chat', label: 'AI Assistant', icon: '✦' },
       ];
     } else if (role === 'manager') {
       this.navCache = [
         { path: '/manager/dashboard', label: 'Overview', icon: '■' },
         { path: '/manager/admin', label: 'Admin Control', icon: '◆' },
-        { path: '/manager/predictions', label: 'Predictions', icon: '🔔' },
+        { path: '/manager/predictions', label: 'Predictions', icon: '◬' },
         { path: '/manager/tasks', label: 'Task Execution', icon: '●' },
-        { path: '/manager/approvals', label: 'Approvals', icon: '✓' },
+        { path: '/manager/approvals', label: 'Approvals', icon: '☑' },
         { path: '/manager/chat', label: 'AI Assistant', icon: '✦' },
       ];
     } else if (role === 'engineer') {
       this.navCache = [
         { path: '/engineer/dashboard', label: 'Overview', icon: '■' },
-        { path: '/engineer/predictions', label: 'Predictions', icon: '🔔' },
+        { path: '/engineer/predictions', label: 'Predictions', icon: '◬' },
         { path: '/engineer/tasks', label: 'Task Execution', icon: '●' },
-        { path: '/engineer/team', label: 'My Team', icon: '👥' },
+        { path: '/engineer/team', label: 'My Team', icon: '◫' },
         { path: '/engineer/chat', label: 'AI Assistant', icon: '✦' },
       ];
     } else if (role === 'technician') {
       this.navCache = [
-        { path: '/technician/predictions', label: 'Predictions', icon: '🔔' },
+        { path: '/technician/predictions', label: 'Predictions', icon: '◬' },
         { path: '/technician/tasks', label: 'Task Execution', icon: '●' },
-        { path: '/technician/team', label: 'My Team', icon: '👥' },
+        { path: '/technician/team', label: 'My Team', icon: '◫' },
         { path: '/technician/chat', label: 'AI Assistant', icon: '✦' },
       ];
     } else {

@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { getApiBaseUrl } from '../utils/api.config';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { tap, catchError } from 'rxjs/operators';
@@ -39,7 +40,7 @@ export class AuthService {
   }
 
   login(credentials: { email: string; password: string }) {
-    return this.http.post<{ token: string; role: string }>('http://localhost:8888/api/identity-service/account/login', credentials).pipe(
+    return this.http.post<{ token: string; role: string }>(`${getApiBaseUrl()}/api/identity-service/account/login`, credentials).pipe(
       tap((response) => {
         let normalizedRole = RoleUtil.normalizeToEnglish(response.role);
 
@@ -76,7 +77,7 @@ export class AuthService {
   register(userData: any, role: string) {
     let endpoint = RoleUtil.toFrenchEndpoint(role);
     
-    return this.http.post(`http://localhost:8888/api/identity-service/account/${endpoint}`, userData).pipe(
+    return this.http.post(`${getApiBaseUrl()}/api/identity-service/account/${endpoint}`, userData).pipe(
       catchError((error) => {
         console.error('Registration error:', error);
         return throwError(() => error);

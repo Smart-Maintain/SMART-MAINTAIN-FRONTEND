@@ -534,14 +534,12 @@ export class AdminManager implements OnInit {
   }
 
   assignTaskToTeam(taskId: string, teamId: string) {
-    console.log('assignTaskToTeam called with:', { taskId, teamId });
     if (!teamId) {
       console.warn('assignTaskToTeam aborted: no teamId provided');
       return;
     }
     this.dataService.assignTaskToTeam(taskId, teamId).subscribe({
       next: () => {
-        console.log('Task assigned successfully');
         this.loadTasks();
       },
       error: (err) => console.error('Error assigning task:', err),
@@ -549,7 +547,6 @@ export class AdminManager implements OnInit {
   }
 
   unassignTaskFromTeam(taskId: string) {
-    console.log('unassignTaskFromTeam called with:', taskId);
     this.dataService.unassignTaskFromTeam(taskId).subscribe({
       next: () => this.loadTasks(),
       error: (err) => console.error('Error unassigning task:', err),

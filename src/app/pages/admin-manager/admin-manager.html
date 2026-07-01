@@ -1,4 +1,4 @@
-<div style="padding: 24px">
+<div class="page-container">
   <div style="margin-bottom: 32px">
     <h1
       style="
@@ -18,14 +18,7 @@
   </div>
 
   <!-- Tabs -->
-  <div
-    style="
-      display: flex;
-      gap: 2px;
-      margin-bottom: 32px;
-      border-bottom: 1px solid rgba(240, 240, 240, 0.06);
-    "
-  >
+  <div class="tabs-container">
     <button
       (click)="setActiveTab('overview')"
       [style.background-color]="activeTab === 'overview' ? 'rgba(242,140,40,0.08)' : 'transparent'"
@@ -237,16 +230,7 @@
 
   <ng-container *ngIf="activeTab === 'overview'">
     <!-- Summary Cards -->
-    <div
-      style="
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 2px;
-        background-color: rgba(240, 240, 240, 0.06);
-        border: 1px solid rgba(240, 240, 240, 0.06);
-        margin-bottom: 32px;
-      "
-    >
+    <div class="kpi-grid">
       <div
         style="
           background-color: #0a0a0a;
@@ -652,15 +636,7 @@
           <!-- Header / Summary Row -->
           <div
             (click)="toggleTask(task.id)"
-            style="
-              padding: 16px 20px;
-              display: grid;
-              grid-template-columns: 80px 2fr 1fr 1fr 100px 40px;
-              align-items: center;
-              gap: 16px;
-              cursor: pointer;
-              background-color: #111114;
-            "
+            class="task-row"
             [style.border-left]="
               expandedTaskId === task.id ? '3px solid #ff6b6b' : '3px solid transparent'
             "
@@ -748,7 +724,7 @@
               background-color: #0a0a0a;
             "
           >
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px">
+            <div class="task-details">
               <div>
                 <h4
                   style="
@@ -2447,15 +2423,7 @@
           Registered Engines Catalog
         </h3>
         <div style="overflow-x: auto">
-          <table
-            style="
-              width: 100%;
-              border-collapse: collapse;
-              text-align: left;
-              font-size: 13px;
-              color: #f0f0f0;
-            "
-          >
+          <table class="responsive-table">
             <thead>
               <tr
                 style="
@@ -2577,15 +2545,7 @@
           Pending Registration Requests
         </h4>
         <div style="overflow-x: auto">
-          <table
-            style="
-              width: 100%;
-              border-collapse: collapse;
-              text-align: left;
-              font-size: 12px;
-              color: #f0f0f0;
-            "
-          >
+          <table class="responsive-table">
             <thead>
               <tr style="border-bottom: 1px solid rgba(240, 240, 240, 0.08); color: #8a8a93">
                 <th style="padding: 12px 8px">Name</th>
@@ -2680,15 +2640,7 @@
           All Registered Accounts
         </h4>
         <div style="overflow-x: auto">
-          <table
-            style="
-              width: 100%;
-              border-collapse: collapse;
-              text-align: left;
-              font-size: 12px;
-              color: #f0f0f0;
-            "
-          >
+          <table class="responsive-table">
             <thead>
               <tr style="border-bottom: 1px solid rgba(240, 240, 240, 0.08); color: #8a8a93">
                 <th style="padding: 12px 8px">Name</th>
@@ -2832,15 +2784,7 @@
         User Bug Feedbacks
       </h3>
       <div style="overflow-x: auto">
-        <table
-          style="
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            font-size: 12px;
-            color: #f0f0f0;
-          "
-        >
+        <table class="responsive-table">
           <thead>
             <tr style="border-bottom: 1px solid rgba(240, 240, 240, 0.08); color: #8a8a93">
               <th style="padding: 12px 8px; width: 160px">Reporter</th>

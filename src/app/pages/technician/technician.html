@@ -1,4 +1,4 @@
-<div style="padding: 24px">
+<div class="page-container">
   <!-- Header -->
   <div style="margin-bottom: 32px">
     <h1
@@ -19,16 +19,7 @@
   </div>
 
   <!-- KPI Cards -->
-  <div
-    style="
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 2px;
-      background-color: rgba(240, 240, 240, 0.06);
-      border: 1px solid rgba(240, 240, 240, 0.06);
-      margin-bottom: 32px;
-    "
-  >
+  <div class="kpi-grid">
     <div
       style="
         background-color: #0a0a0a;
@@ -177,14 +168,7 @@
   </div>
 
   <!-- Filters + Weekly Progress -->
-  <div
-    style="
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
-      gap: 24px;
-      margin-bottom: 32px;
-    "
-  >
+  <div class="filters-grid">
     <!-- Filters -->
     <div
       style="background-color: #0a0a0a; border: 1px solid rgba(240, 240, 240, 0.06); padding: 24px"
@@ -312,15 +296,7 @@
         <!-- Header / Summary Row -->
         <div
           (click)="toggleTask(task.id)"
-          style="
-            padding: 16px 20px;
-            display: grid;
-            grid-template-columns: 80px 2fr 1fr 1fr 100px 40px;
-            align-items: center;
-            gap: 16px;
-            cursor: pointer;
-            background-color: #111114;
-          "
+          class="task-row"
           [style.border-left]="
             expandedTaskId === task.id ? '3px solid #F28C28' : '3px solid transparent'
           "
@@ -502,19 +478,9 @@
                 <!-- Inline new subtask form -->
                 <div
                   *ngIf="isLeaderOrAdmin() && newSubTaskForms[task.id]?.open"
-                  style="
-                    display: flex;
-                    gap: 8px;
-                    margin-bottom: 12px;
-                    flex-wrap: wrap;
-                    align-items: flex-end;
-                    background: #111114;
-                    padding: 12px;
-                    border: 1px dashed rgba(0, 168, 232, 0.3);
-                    border-radius: 4px;
-                  "
+                  class="subtask-form"
                 >
-                  <div style="flex: 2; min-width: 180px;">
+                  <div class="subtask-form-input">
                     <label style="font-size: 10px; color: #8a8a93; text-transform: uppercase; display: block; margin-bottom: 4px; font-family: 'Space Grotesk', sans-serif;">Description</label>
                     <input
                       [(ngModel)]="newSubTaskForms[task.id].description"
@@ -530,7 +496,7 @@
                       "
                     />
                   </div>
-                  <div style="flex: 1; min-width: 160px;">
+                  <div class="subtask-form-select">
                     <label style="font-size: 10px; color: #8a8a93; text-transform: uppercase; display: block; margin-bottom: 4px; font-family: 'Space Grotesk', sans-serif;">Assign To</label>
                     <select
                       [(ngModel)]="newSubTaskForms[task.id].assignedMemberId"
@@ -691,7 +657,7 @@
                   </ul>
                 </div>
 
-                <div *ngIf="task.status !== 'completed'" style="display: flex; gap: 8px">
+                <div *ngIf="task.status !== 'completed'" class="piece-request-row">
                   <select
                     [(ngModel)]="pieceRequestData[task.id].pieceId"
                     style="

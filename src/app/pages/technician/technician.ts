@@ -48,7 +48,6 @@ export class Technician implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log('Technician page initialized');
     this.loadTasks();
     this.loadPieces();
     this.loadTeams();
@@ -65,7 +64,6 @@ export class Technician implements OnInit {
     const user = this.auth.user();
     this.dataService.getTasks(user?.role, user?.name).subscribe({
       next: (tasks) => {
-        console.log('Technician fetched tasks:', tasks);
         // Map backend Tache entities to frontend format if needed
         this.allTasks = tasks.map((t) => {
           this.pieceRequestData[t.id] = this.pieceRequestData[t.id] || { pieceId: '', quantite: 1 };
@@ -86,7 +84,6 @@ export class Technician implements OnInit {
             equipe: t.equipe,
           };
         });
-        console.log('Technician mapped tasks:', this.allTasks.length, this.allTasks);
         this.isLoading = false;
       },
       error: (err) => {

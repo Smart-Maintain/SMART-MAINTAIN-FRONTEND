@@ -1,0 +1,114 @@
+.page-container {
+  padding: 24px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 500px), 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.grid-reports {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.kpi-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  background-color: rgba(240, 240, 240, 0.06);
+  border: 1px solid rgba(240, 240, 240, 0.06);
+}
+
+.task-row {
+  padding: 16px 20px;
+  display: grid;
+  grid-template-columns: 80px 2fr 1fr 1fr 100px 40px;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  background-color: #111114;
+}
+
+.task-details {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 32px;
+}
+
+.subtask-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  background: #111114;
+  padding: 12px;
+  border: 1px dashed rgba(0, 168, 232, 0.3);
+  border-radius: 4px;
+}
+
+.subtask-form-input {
+  flex: 2;
+  min-width: 180px;
+}
+
+.subtask-form-select {
+  flex: 1;
+  min-width: 160px;
+}
+
+@media (max-width: 768px) {
+  .page-container {
+    padding: 16px;
+  }
+  
+  .grid-2, .grid-reports {
+    gap: 16px;
+  }
+
+  .task-row {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    position: relative;
+    padding: 16px;
+  }
+
+  .task-row > div:nth-child(1) { /* ID */
+    font-size: 11px;
+    margin-bottom: 4px;
+  }
+
+  .task-row > div:nth-child(2) { /* Title */
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .task-row > div:nth-child(3), /* Priority */
+  .task-row > div:nth-child(4) { /* Status */
+    display: inline-block;
+  }
+
+  .task-row > div:nth-child(5) { /* Due Date */
+    font-size: 11px;
+    margin-top: 8px;
+  }
+
+  .task-row > div:nth-child(6) { /* Chevron */
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  .task-details {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
