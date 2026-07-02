@@ -42,3 +42,40 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# ---
+
+# Dependencies
+node_modules/
+.npm/
+
+# Build output
+dist/
+.angular/
+
+# Environment files
+src/environments/environment.prod.ts
+.env
+.env.local
+
+# Capacitor
+android/.gradle/
+android/app/build/
+android/build/
+ios/App/Pods/
+
+# IDE
+.idea/
+.vscode/settings.json
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+codex-ng-serve.log
+ng-serve.err.log
+ng-serve.out.log
